@@ -1,6 +1,7 @@
 import { Api } from "../utils/api";
+import { createParams } from "../utils/queryParams";
 
-export class Contact {
+export class Contacts {
   private api: Api;
   /**
    * Creates a new Contact model.
@@ -13,85 +14,185 @@ export class Contact {
   /**
    * Fetches a list of contacts.
    * @param parameters - Options for fetching contacts, like page size and page number.
+   * @example
+   * const contacts = await contacts.getContacts({ limit: 5, offset: 10 });
+   * console.log(contacts);
+   * @returns The list of contacts if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   * @see {@link https://developers.keap.com/docs/api/v1#operation/getContacts}
    */
-  getContacts(parameters?: object): Promise<object | undefined> {
-    return this.api.makeApiCall("get", "v1/contacts", parameters);
+  async getContacts(
+    parameters?: object
+  ): Promise<PaginationWrapper<Contact, "contacts"> | undefined> {
+    const r = await this.api.makeApiCall("get", "v1/contacts", parameters);
+
+    // Add this line to assert that r is an object with a 'contacts' property
+    const rObj = r as { contacts: IContact[] | null };
+
+    if (!rObj || !Object.prototype.hasOwnProperty.call(rObj, "contacts")) {
+      return undefined;
+    }
+
+    if (rObj.contacts === null) {
+      throw new Error("No contacts found");
+    }
+
+    const contacts = rObj.contacts.map((c: IContact) => {
+      if (c === null) {
+        throw new Error("Contact is null");
+      }
+      return new Contact(this, c);
+    });
+
+    return {
+      ...r,
+      contacts,
+    } as PaginationWrapper<Contact, "contacts">;
   }
 
   /**
    * Creates a new contact in Keap.
-   * @param contactData - The data to create a contact with.
+   * @param contactData {IContact} - The data to create a contact with ContactData.
+   * @returns The newly created contact if the API call was successful, undefined otherwise.
+   * @example
+   * const contact = await contacts.createContact({given_name: "Jane", family_name: "Doe"});
+   * console.log(contact);
+   * @throws Will throw an error if the API call fails.
+   * @see {@link https://developer.infusionsoft.com/docs/rest/#tag/Contact/operation/createContactUsingPOST}
    */
-  createContact(contactData: object): Promise<object | undefined> {
-    return this.api.makeApiCall("post", "v1/contacts", contactData);
+  async createContact(contactData: IContact): Promise<Contact | undefined> {
+    const r = await this.api.makeApiCall("post", "v1/contacts", contactData);
+    if (!r) return undefined;
+    return new Contact(this, r as IContact);
   }
 
   /**
    * Updates an existing contact.
    * @param contactId - The ID of the contact to update.
-   * @param contactData - The data to update the contact with.
+   * @param contactData {IContact} - The data to update the contact with.
+   * @returns The updated contact if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   * @example
+   * const contact = await contacts
+   *  .updateContact(123, {
+   *    given_name: "Jane",
+   *    family_name: "Doe"
+   * });
    */
-  updateContact(
+  async updateContact(
     contactId: number,
-    contactData: object
-  ): Promise<object | undefined> {
-    return this.api.makeApiCall(
+    contactData: IContact
+  ): Promise<Contact | undefined> {
+    const r = await this.api.makeApiCall(
       "patch",
       `v1/contacts/${contactId}`,
       contactData
     );
+    if (!r) return undefined;
+    return new Contact(this, r as IContact);
   }
 
   /**
    * Deletes a contact by ID.
    * @param contactId - The ID of the contact to delete.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   * @example
+   * const result = await contacts.deleteContact(123);
+   * console.log(result); // true
+   * if (result) {
+   *   console.log("Contact deleted successfully");
+   * }else{
+   *   console.log("Failed to delete contact");
+   * }
    */
-  deleteContact(contactId: number): Promise<object | undefined> {
-    return this.api.makeApiCall("delete", `v1/contacts/${contactId}`);
+  async deleteContact(contactId: number): Promise<boolean | undefined> {
+    const r = this.api.makeApiCall("delete", `v1/contacts/${contactId}`);
+    if (!r) return undefined;
+    return true;
   }
 
   /**
    * Fetches a single contact by ID.
    * @param contactId - The ID of the contact to fetch.
+   * @returns The contact if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   * @example
+   * const contact = await contacts.getContact(123);
+   * console.log(contact.given_name); // "Jane"
+   * console.log(contact.family_name); // "Doe"
    */
-  getContact(contactId: number): Promise<object | undefined> {
-    return this.api.makeApiCall("get", `v1/contacts/${contactId}`);
+  async getContact(contactId: number): Promise<Contact | undefined> {
+    const r = await this.api.makeApiCall("get", `v1/contacts/${contactId}`);
+    if (!r) return undefined;
+    return new Contact(this, r as IContact);
   }
 
   /**
    * Fetches the contact model.
    * @returns The contact model if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   * @example
+   * const contactModel = await contacts.getContactModel();
+   * console.log(contactModel);
    */
-  getContactModel(): Promise<object | undefined> {
-    return this.api.makeApiCall("get", "v1/contacts/model");
+  async getContactModel(): Promise<ContactModel | undefined> {
+    const r = await this.api.makeApiCall("get", "v1/contacts/model");
+    if (!r) return undefined;
+    return r as Promise<ContactModel>;
   }
 
   /**
    * Creates a new custom contact field.
-   * @param customFieldData - The data to create a custom field with.
+   * @param customFieldData{CustomField} - The data to create a custom field with.
    * @returns The newly created custom field if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
    */
-  createCustomField(customFieldData: object): Promise<object | undefined> {
-    return this.api.makeApiCall(
+  async createCustomField(
+    customFieldData: CustomField
+  ): Promise<CustomField | undefined> {
+    const r = await this.api.makeApiCall(
       "post",
       "v1/contacts/customFields",
       customFieldData
     );
+    if (!r) return undefined;
+    return r as Promise<CustomField>;
   }
 
   /**
    * Creates a new contact if the contact does not exist, or updates the contact if it does.
-   * @param contactData - The data to create or update a contact with.
+   * @param contactData {IContact} - The data to create or update a contact with.
    * @returns The newly created or updated contact if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   * @example
+   * const contact = await contacts.createOrUpdate({
+   *    given_name: "Jane",
+   *    family_name: "Doe"
+   * })
+   *
+   * console.log(contact); // {given_name: "Jane", family_name: "Doe", id: 123}
+   *
+   *
+   * const contact = await contacts.createOrUpdate({
+   *    given_name: "John",
+   *    family_name: "Doe"
+   *    id: 123
+   * })
+   *
+   * console.log(contact); // {given_name: "John", family_name: "Doe", id: 123}
    */
-  createOrUpdate(contactData: object): Promise<object | undefined> {
-    return this.api.makeApiCall("put", "v1/contacts", contactData);
+  async createOrUpdate(contactData: IContact): Promise<Contact | undefined> {
+    const r = await this.api.makeApiCall("put", "v1/contacts", contactData);
+    if (!r) return undefined;
+    return new Contact(this, r as IContact);
   }
 
   /**
    * Fetches the credit cards associated with a contact.
    * @param contactId - The ID of the contact to fetch credit cards for.
    * @returns The credit cards associated with the contact if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
    */
   getCreditCards(contactId: number): Promise<object | undefined> {
     return this.api.makeApiCall("get", `v1/contacts/${contactId}/creditCards`);
@@ -101,17 +202,17 @@ export class Contact {
    * Creates a new credit card for a contact.
    * @param contactId - The ID of the contact to add the credit card to.
    * @param creditCardData - The data to create the credit card with.
-   * @returns The newly created credit card if the API call was successful, undefined otherwise.
+   * @returns {Promise<CreditCard>} - The newly created credit card if the API call was successful, undefined otherwise.
    */
   createCreditCard(
     contactId: number,
     creditCardData: object
-  ): Promise<object | undefined> {
+  ): Promise<CreditCard | undefined> {
     return this.api.makeApiCall(
       "post",
       `v1/contacts/${contactId}/creditCards`,
       creditCardData
-    );
+    ) as Promise<CreditCard>;
   }
 
   /**
@@ -119,47 +220,69 @@ export class Contact {
    * @param contactId - The ID of the contact to fetch email addresses for.
    * @returns The email addresses associated with the contact if the API call was successful, undefined otherwise.
    */
-  listEmails(contactId: number): Promise<object | undefined> {
-    return this.api.makeApiCall("get", `v1/contacts/${contactId}/emails`);
+  async listEmails(
+    contactId: number,
+    options?: { email?: string; limit?: number; offset?: number }
+  ): Promise<PaginationWrapper<EmailRecord, "emails"> | undefined> {
+    const params = options
+      ? createParams(options, ["email", "limit", "offset"])
+      : undefined;
+    const r = await this.api.makeApiCall(
+      "get",
+      `v1/contacts/${contactId}/emails?${params?.toString()}`
+    );
+    if (!r) return undefined;
+    return r as PaginationWrapper<EmailRecord, "emails">;
   }
 
   /**
    * Creates a new email address for a contact.
    * @param contactId - The ID of the contact to add the email address to.
-   * @param emailData - The data to create the email address with.
+   * @param emailData {EmailRecord} - The data to create the email address with.
    * @returns The newly created email address if the API call was successful, undefined otherwise.
    */
   createEmail(
     contactId: number,
-    emailData: object
-  ): Promise<object | undefined> {
+    emailData: EmailRecord
+  ): Promise<EmailRecord | undefined> {
     return this.api.makeApiCall(
       "post",
       `v1/contacts/${contactId}/emails`,
       emailData
-    );
+    ) as Promise<EmailRecord>;
   }
 
   /**
    * Fetches the tags applied to a contact.
    * @param contactId - The ID of the contact to fetch tags for.
+   * @param options - The options to use when fetching tags.
    * @returns The tags applied to the contact if the API call was successful, undefined otherwise.
    */
-  listAppliedTags(contactId: number): Promise<object | undefined> {
-    return this.api.makeApiCall("get", `v1/contacts/${contactId}/tags`);
+  async listAppliedTags(
+    contactId: number,
+    options?: { limit?: number; offset?: number }
+  ): Promise<PaginationWrapper<Tag, "tags"> | undefined> {
+    const params = options
+      ? createParams(options, ["limit", "offset"])
+      : undefined;
+    const r = await this.api.makeApiCall(
+      "get",
+      `v1/contacts/${contactId}/tags?${params?.toString()}`
+    );
+    if (!r) return undefined;
+    return r as PaginationWrapper<Tag, "tags">;
   }
 
   /**
    * Applies a tag to a contact.
-   * @param contactId - The ID of the contact to apply the tag to.
-   * @param tagId - The ID of the tag to apply.
+   * @param contactId {number} - The ID of the contact to apply the tag to.
+   * @param tagIds {number[]} - The ID of the tag to apply.
    * @returns The result of the API call if it was successful, undefined otherwise.
    */
-  applyTag(contactId: number, tagId: number): Promise<object | undefined> {
-    return this.api.makeApiCall(
-      "post",
-      `v1/contacts/${contactId}/tags/${tagId}`
-    );
+  applyTags(contactId: number, tagIds: number[]): Promise<object | undefined> {
+    return this.api.makeApiCall("post", `v1/contacts/${contactId}/tags`, {
+      tagIds,
+    });
   }
 
   /**
@@ -200,11 +323,218 @@ export class Contact {
    * @param utmData - The UTM data to add.
    * @returns The result of the API call if it was successful, undefined otherwise.
    */
-  addUTM(contactId: number, utmData: object): Promise<object | undefined> {
+  addUTM(contactId: number, utmData: UTM): Promise<UTM | undefined> {
     return this.api.makeApiCall(
       "post",
       `v1/contacts/${contactId}/utms`,
       utmData
-    );
+    ) as Promise<UTM>;
+  }
+}
+
+class Contact {
+  ScoreValue: string | null = null;
+  addresses: Array<{
+    country_code: string;
+    field: string;
+    line1: string;
+    line2: string;
+    locality: string;
+    postal_code: string;
+    region: string;
+    zip_code: string;
+    zip_four: string;
+  }> | null = null;
+  anniversary: Date | null = null;
+  birthday: Date | null = null;
+  company: {
+    company_name: string;
+    id: number;
+  } | null = null;
+  company_name: string | null = null;
+  contact_type: string | null = null;
+  custom_fields: Array<{
+    content: object;
+    id: number;
+  }> | null = null;
+  date_created: Date | null = null;
+  email_addresses: Array<{
+    email: string;
+    field: string;
+  }> | null = null;
+  email_opted_in: boolean | null = null;
+  email_status: string | null = null;
+  family_name: string | null = null;
+  fax_numbers: Array<{
+    field: string;
+    number: string;
+    type: string;
+  }> | null = null;
+  given_name: string | null = null;
+  id: number;
+  job_title: string | null = null;
+  last_updated: Date | null = null;
+  lead_source_id: number | null = null;
+  middle_name: string | null = null;
+  opt_in_reason: string | null = null;
+  origin: {
+    date: Date;
+    ip_address: string;
+  } | null = null;
+  owner_id: number | null = null;
+  phone_numbers: Array<{
+    extension: string;
+    field: string;
+    number: string;
+    type: string;
+  }> | null = null;
+  preferred_locale: string | null = null;
+  preferred_name: string | null = null;
+  prefix: string | null = null;
+  relationships: Array<{
+    id: number;
+    linked_contact_id: number;
+    relationship_type_id: number;
+  }> | null = null;
+  social_accounts: Array<{
+    name: string;
+    type: string;
+  }> | null = null;
+  source_type: string | null = null;
+  spouse_name: string | null = null;
+  suffix: string | null = null;
+  tag_ids: Array<number> | null = null;
+  time_zone: string | null = null;
+  website: string | null = null;
+  private contacts: Contacts;
+
+  /**
+   * Creates a new Contact instance from the given data and API client.
+   * @param api - The API client to use for making requests.
+   * @param data - The data to use to populate the Contact instance.
+   */
+  constructor(contacts: Contacts, data: IContact) {
+    this.contacts = contacts;
+    Object.assign(this, data);
+    if (!data.id) throw new Error("Contact ID is required");
+    this.id = data.id;
+  }
+
+  /**
+   * Updates the contact with the given data.
+   * @param data - The data to update the contact with.
+   * @returns The updated contact if the API call was successful, undefined otherwise.
+   */
+  async update(data: IContact): Promise<Contact | undefined> {
+    const r = await this.contacts.updateContact(this.id, data);
+    if (!r) return undefined;
+    return new Contact(this.contacts, r);
+  }
+
+  /**
+   * Deletes the contact.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  async delete(): Promise<boolean | undefined> {
+    return this.contacts.deleteContact(this.id);
+  }
+
+  /**
+   * Refreshes the contact data from the API.
+   * @returns The updated contact if the API call was successful, undefined otherwise.
+   */
+  async refresh(): Promise<Contact | undefined> {
+    const contact = await this.contacts.getContact(this.id);
+    Object.assign(this, contact);
+    return contact;
+  }
+
+  /**
+   * Fetches the credit cards associated with this contact.
+   * @returns The credit cards associated with this contact if the API call was successful, undefined otherwise.
+   */
+  getCreditCards(): Promise<object | undefined> {
+    return this.contacts.getCreditCards(this.id);
+  }
+
+  /**
+   * Creates a new credit card for this contact.
+   * @param data - The data to create the credit card with.
+   * @returns The newly created credit card if the API call was successful, undefined otherwise.
+   */
+  addCreditCard(data: object): Promise<CreditCard | undefined> {
+    return this.contacts.createCreditCard(this.id, data);
+  }
+
+  /**
+   * Fetches the email addresses associated with this contact.
+   * @param options - The options to use when fetching email addresses.
+   * @returns The email addresses associated with this contact if the API call was successful, undefined otherwise.
+   */
+  getEmails(options?: {
+    email?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginationWrapper<EmailRecord, "emails"> | undefined> {
+    return this.contacts.listEmails(this.id, options);
+  }
+
+  /**
+   * Adds a new email address to this contact.
+   * @param data - The data to create the email address with.
+   * @returns The newly created email address if the API call was successful, undefined otherwise.
+   */
+  addEmail(data: EmailRecord): Promise<EmailRecord | undefined> {
+    return this.contacts.createEmail(this.id, data);
+  }
+
+  /**
+   * Fetches the tags applied to this contact.
+   * @param options - The options to use when fetching tags.
+   * @returns The tags applied to this contact if the API call was successful, undefined otherwise.
+   */
+  getAppliedTags(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginationWrapper<Tag, "tags"> | undefined> {
+    return this.contacts.listAppliedTags(this.id, options);
+  }
+
+  /**
+   * Applies the given tags to this contact.
+   * @param tagIds - The IDs of the tags to apply.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   */
+  applyTags(tagIds: number[]): Promise<object | undefined> {
+    return this.contacts.applyTags(this.id, tagIds);
+  }
+
+  /**
+   * Removes the given tag from this contact.
+   * @param tagId - The ID of the tag to remove.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   */
+  removeTag(tagId: number): Promise<object | undefined> {
+    return this.contacts.removeTag(this.id, tagId);
+  }
+
+  /**
+   * Removes multiple tags from this contact.
+   * @param tagIds - The IDs of the tags to remove.
+   * @param data - Data to be sent with the request.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   */
+  removeTags(tagIds: number[], data: object): Promise<object | undefined> {
+    return this.contacts.removeTags(this.id, tagIds, data);
+  }
+
+  /**
+   * Adds UTM tracking data to this contact.
+   * @param utmData - The UTM data to add.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   */
+  addUTM(utmData: UTM): Promise<UTM | undefined> {
+    return this.contacts.addUTM(this.id, utmData);
   }
 }

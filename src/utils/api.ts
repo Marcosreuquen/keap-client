@@ -54,7 +54,7 @@ class Api {
     method: "get" | "post" | "put" | "delete" | "patch",
     url: string,
     data?: object
-  ): Promise<object | undefined> {
+  ): Promise<object | Array<object> | undefined> {
     try {
       const response: AxiosResponse = await this.fetcher.request({
         method,

@@ -21,10 +21,14 @@ let apiKey = 'Your_api_key', //your api key from Keap/infusionsoft
   retries = 3; // amount of retries you want the api to do if the request failed
 
 //requestTimeout and retries are optional
-const keap = new KeapClient(apiKey, requestTimeout, retries) 
+const keap = new KeapClient({ apiKey, requestTimeout, retries }) 
 
 // each model
-const contact = await keap.Contact.getContact(1); 
+const contact: Contact = await keap.Contact.getContact(1); 
+
+// use the instance
+contact.update({ email_opted_in: true });
+contact.applyTags(['tag1', 'tag2']);
 ```
 
 ## Available models

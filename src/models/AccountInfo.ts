@@ -15,15 +15,21 @@ export class AccountInfo {
    * Fetches the current account information.
    * @returns The account information if the API call was successful, undefined otherwise.
    */
-  public async getAccountInfo(): Promise<object | undefined> {
-    return this.api.makeApiCall("get", "v1/account/profile");
+  public async getAccountInfo(): Promise<AccountInfo | undefined> {
+    const r = await this.api.makeApiCall("get", "v1/account/profile");
+    if (!r) return undefined;
+    return r as AccountInfo;
   }
 
   /**
    * Updates the current account information.
    * @returns The account information if the API call was successful, undefined otherwise.
    */
-  public async updateAccountInfo(): Promise<object | undefined> {
-    return this.api.makeApiCall("put", "v1/account/profile");
+  public async updateAccountInfo(
+    data: AccountInfo
+  ): Promise<AccountInfo | undefined> {
+    const r = await this.api.makeApiCall("put", "v1/account/profile", data);
+    if (!r) return undefined;
+    return r as AccountInfo;
   }
 }

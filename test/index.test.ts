@@ -8,11 +8,11 @@ describe("KeapClient", () => {
   });
 
   it("should have a Contact property", () => {
-    expect(keapClient.Contact).toBeDefined();
+    expect(keapClient.Contacts).toBeDefined();
   });
 
   it("should create a new Contact instance", () => {
-    const contact = keapClient.Contact;
+    const contact = keapClient.Contacts;
     expect(contact).toBeInstanceOf(Object);
   });
 });

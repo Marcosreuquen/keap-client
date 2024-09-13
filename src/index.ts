@@ -1,5 +1,5 @@
 import { Api } from "./utils/api";
-import { Contact } from "./models/Contact";
+import { Contacts } from "./models/Contact";
 import { AccountInfo } from "./models/AccountInfo";
 
 class KeapClient {
@@ -38,8 +38,8 @@ class KeapClient {
    * and fetch contacts.
    * @returns An instance of Contact.
    */
-  get Contact() {
-    return new Contact(this.api);
+  get Contacts() {
+    return new Contacts(this.api);
   }
 }
 
