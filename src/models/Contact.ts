@@ -14,17 +14,56 @@ export class Contacts {
   /**
    * Fetches a list of contacts.
    * @param parameters - Options for fetching contacts, like page size and page number.
+   * email:string //Optional email address to query on
+   * family_name:string //Optional last name or surname to query on
+   * given_name:string //Optional first name or forename to query on
+   * limit:number //Sets a total of items to return
+   * offset:number //Sets a beginning range of items to return
+   * optional_properties:string[] //Comma-delimited list of Contact properties to include in the response. (Some fields such as lead_source_id, custom_fields, and job_title aren't included, by default.)
+   * order:string //Enum: "id" "date_created" "last_updated" "name" "firstName" "email" //Attribute to order items by
+   * order_direction:string //Enum: "ASCENDING" "DESCENDING" //How to order the data i.e. ascending (A-Z) or descending (Z-A)
+   * since:string //Date to start searching from on LastUpdated ex. 2017-01-01T22:17:59.039Z
+   * until:string //Date to search to on LastUpdated ex. 2017-01-01T22:17:59.039Z
    * @example
    * const contacts = await contacts.getContacts({ limit: 5, offset: 10 });
    * console.log(contacts);
    * @returns The list of contacts if the API call was successful, undefined otherwise.
    * @throws Will throw an error if the API call fails.
-   * @see {@link https://developers.keap.com/docs/api/v1#operation/getContacts}
    */
-  async getContacts(
-    parameters?: object
-  ): Promise<PaginationWrapper<Contact, "contacts"> | undefined> {
-    const r = await this.api.makeApiCall("get", "v1/contacts", parameters);
+  async getContacts(parameters?: {
+    email: string;
+    family_name: string;
+    given_name: string;
+    limit: number;
+    offset: number;
+    optional_properties: string[];
+    order:
+      | "id"
+      | "date_created"
+      | "last_updated"
+      | "name"
+      | "firstName"
+      | "email";
+    order_direction: "ASCENDING" | "DESCENDING";
+    since: string;
+    until: string;
+  }): Promise<PaginationWrapper<Contact, "contacts"> | undefined> {
+    const params = parameters
+      ? createParams(parameters, [
+          "email",
+          "limit",
+          "offset",
+          "family_name",
+          "given_name",
+          "optional_properties",
+          "order",
+          "order_direction",
+          "since",
+          "until",
+        ])
+      : undefined;
+
+    const r = await this.api.makeApiCall("get", `v1/contacts${params}`);
 
     // Add this line to assert that r is an object with a 'contacts' property
     const rObj = r as { contacts: IContact[] | null };
@@ -58,7 +97,6 @@ export class Contacts {
    * const contact = await contacts.createContact({given_name: "Jane", family_name: "Doe"});
    * console.log(contact);
    * @throws Will throw an error if the API call fails.
-   * @see {@link https://developer.infusionsoft.com/docs/rest/#tag/Contact/operation/createContactUsingPOST}
    */
   async createContact(contactData: IContact): Promise<Contact | undefined> {
     const r = await this.api.makeApiCall("post", "v1/contacts", contactData);

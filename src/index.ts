@@ -1,6 +1,8 @@
 import { Api } from "./utils/api";
 import { Contacts } from "./models/Contact";
 import { AccountInfo } from "./models/AccountInfo";
+import { Opportunities } from "./models/Opportunities";
+import { Products } from "./models/Products";
 
 class KeapClient {
   private api: Api;
@@ -40,6 +42,14 @@ class KeapClient {
    */
   get Contacts() {
     return new Contacts(this.api);
+  }
+
+  get Opportunities() {
+    return new Opportunities(this.api);
+  }
+
+  get Products() {
+    return new Products(this.api);
   }
 }
 

@@ -221,3 +221,95 @@ type ContactAddress = {
   zip_code: string;
   zip_four: string;
 };
+
+type OpportunityStage = {
+  details: {
+    check_list_items: Array<{
+      description: string;
+      done_date: string;
+      id: number;
+      instance_id: number;
+      item_order: number;
+      required: boolean;
+    }>;
+    probability: number;
+    stage_order: number;
+    target_num_days: number;
+  };
+  id: number;
+  name: string;
+  reasons: Array<string>;
+};
+
+type OpportunityContact = {
+  company_name: string;
+  email: string;
+  first_name: string;
+  id: number;
+  job_title: string;
+  last_name: string;
+  phone_number: string;
+};
+
+type IOpportunity = {
+  affiliate_id?: number;
+  contact: OpportunityContact;
+  custom_fields?: Array<{
+    content: object;
+    id: number;
+  }>;
+  date_created?: string;
+  estimated_close_date?: string;
+  id?: number;
+  include_in_forecast?: number;
+  last_updated?: string;
+  next_action_date?: string;
+  next_action_notes?: string;
+  opportunity_notes?: string;
+  opportunity_title: string;
+  projected_revenue_high?: number;
+  projected_revenue_low?: number;
+  stage: OpportunityStage;
+  user?: {
+    first_name: string;
+    id: number;
+    last_name: string;
+  };
+};
+
+type IProduct = {
+  active?: boolean;
+  id?: number;
+  product_desc?: string;
+  product_name: string;
+  product_price?: number;
+  product_short_desc?: string;
+  sku?: string;
+  subscription_only?: boolean;
+  subscription_plans?: Array<IProductSubscription>;
+  url?: string;
+};
+
+type IProductSubscription = {
+  active?: boolean;
+  cycle_type: "DAY" | "WEEK" | "MONTH" | "YEAR";
+  frequency?: number;
+  id?: number;
+  number_of_cycles?: number;
+  plan_price: number;
+  subscription_plan_index?: number;
+  subscription_plan_name?: string;
+  url?: string;
+};
+
+type ProductsWithPagination = PaginationWrapper<IProduct, "products"> & {
+  sync_token?: string;
+};
+
+type Base64Image = `data:image/${
+  | "png"
+  | "gif"
+  | "jpg"
+  | "jpeg"};base64${string}`;
+
+type ImageName = `${string}.${"png" | "gif" | "jpg" | "jpeg"}`;

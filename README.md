@@ -47,8 +47,8 @@ contact.applyTags(['tag1', 'tag2']);
 - ⬜️ Locale
 - ⬜️ Merchant
 - ⬜️ Note
-- ⬜️ Opportunity
-- ⬜️ Product
+- ✅ Opportunity
+- ✅ Product
 - ⬜️ REST Hooks
 - ⬜️ Setting
 - ⬜️ Tags
