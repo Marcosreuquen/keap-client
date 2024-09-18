@@ -27,7 +27,7 @@ describe("Contacts", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should return a PaginationWrapper with contacts if found", async () => {
+    it("should return contacts with pagination if found", async () => {
       const contactsData = [
         { id: 1, name: "John Doe" },
         { id: 2, name: "Jane Doe" },

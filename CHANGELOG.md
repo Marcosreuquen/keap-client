@@ -9,3 +9,11 @@ keap-client first commit. Create structure, tests suites, config, licence and fi
 ## 0.0.2
 
 add contribution guidelines, changelog, types. Refactor Contact model.
+
+## 0.0.3
+
+Add products and opportunities models.
+
+## 0.0.4
+
+Add tests, refactor.

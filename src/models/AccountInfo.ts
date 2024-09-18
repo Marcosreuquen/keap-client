@@ -15,10 +15,10 @@ export class AccountInfo {
    * Fetches the current account information.
    * @returns The account information if the API call was successful, undefined otherwise.
    */
-  public async getAccountInfo(): Promise<AccountInfo | undefined> {
+  public async getAccountInfo(): Promise<IAccountInfo | undefined> {
     const r = await this.api.makeApiCall("get", "v1/account/profile");
     if (!r) return undefined;
-    return r as AccountInfo;
+    return r as IAccountInfo;
   }
 
   /**
@@ -26,10 +26,10 @@ export class AccountInfo {
    * @returns The account information if the API call was successful, undefined otherwise.
    */
   public async updateAccountInfo(
-    data: AccountInfo
-  ): Promise<AccountInfo | undefined> {
+    data: IAccountInfo
+  ): Promise<IAccountInfo | undefined> {
     const r = await this.api.makeApiCall("put", "v1/account/profile", data);
     if (!r) return undefined;
-    return r as AccountInfo;
+    return r as IAccountInfo;
   }
 }

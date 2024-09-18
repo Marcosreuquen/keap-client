@@ -251,4 +251,96 @@ class Product {
     Object.assign(this, data);
     this.products = products;
   }
+
+  /**
+   * Updates this product with the given data.
+   * @param data - The data to update this product with.
+   * @returns The updated product if the API call was successful, undefined otherwise.
+   */
+  update(data: IProduct) {
+    Object.assign(this, data);
+    return this.products.updateProduct(this);
+  }
+
+  /**
+   * Deletes this product.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  delete(): Promise<boolean | undefined> {
+    return this.products.deleteProduct(this.id);
+  }
+
+  /**
+   * Refreshes this product from the API.
+   * @returns The updated product if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  refresh(): Promise<Product | undefined> {
+    return this.products.getProduct(this.id);
+  }
+
+  /**
+   * Creates a new subscription plan for this product.
+   * @param data - The data to create the subscription plan with.
+   * @returns The newly created subscription plan if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  createSubscriptionPlan(
+    data: IProductSubscription
+  ): Promise<IProductSubscription | undefined> {
+    return this.products.createASubscriptionPlan(this.id, data);
+  }
+
+  /**
+   * Retrieves a subscription plan associated with this product.
+   * @param subscriptionId - The ID of the subscription plan to retrieve.
+   * @returns The subscription plan if the API call was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  getSubscriptionPlan(
+    subscriptionId: number
+  ): Promise<IProductSubscription | undefined> {
+    return this.products.getASubscriptionPlan(this.id, subscriptionId);
+  }
+
+  /**
+   * Deletes a subscription plan associated with this product.
+   * @param subscriptionId - The ID of the subscription plan to delete.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  deleteSubscriptionPlan(subscriptionId: number): Promise<boolean | undefined> {
+    return this.products.deleteASubscriptionPlan(this.id, subscriptionId);
+  }
+
+  /**
+   * Uploads a product image associated with this product.
+   * @param fileData - The base64 encoded image data.
+   * @param fileName - The name of the image.
+   * @param checksum - The checksum of the image.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  uploadImage(
+    fileData: Base64Image,
+    fileName: ImageName,
+    checksum: string
+  ): Promise<boolean | undefined> {
+    return this.products.uploadProductImage(
+      this.id,
+      fileData,
+      fileName,
+      checksum
+    );
+  }
+
+  /**
+   * Deletes the product image associated with this product.
+   * @returns The result of the API call if it was successful, undefined otherwise.
+   * @throws Will throw an error if the API call fails.
+   */
+  deleteImage(): Promise<boolean | undefined> {
+    return this.products.deleteProductImage(this.id);
+  }
 }

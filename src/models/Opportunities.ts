@@ -35,7 +35,7 @@ export class Opportunities {
     search_term: string;
     stage_id: number;
     user_id: number;
-  }): Promise<PaginationWrapper<Opportunity, "opportunities"> | undefined> {
+  }): Promise<OpportunitiesWithPagination | undefined> {
     let queryParams;
     if (parameters) {
       queryParams = createParams(parameters, [
@@ -73,7 +73,7 @@ export class Opportunities {
     return {
       ...r,
       opportunities,
-    } as PaginationWrapper<Opportunity, "opportunities">;
+    };
   }
 
   /**

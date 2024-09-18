@@ -58,7 +58,7 @@ We follow the [Contributor Covenant Code of Conduct](https://www.contributor-cov
 **License**
 ----------
 
-keap-client is licensed under the [License Name] license. By contributing to keap-client, you agree to license your contributions under this license.
+keap-client is licensed under the MIT license. By contributing to keap-client, you agree to license your contributions under this license.
 
 **Acknowledgments**
 ------------------

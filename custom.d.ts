@@ -170,11 +170,10 @@ type EmailRecord = {
   subject?: string;
 };
 
-type PaginationWrapper<T, K extends string> = {
+type Pagination = {
   count?: number;
   next?: string;
   previous?: string;
-  [key in K]?: T[];
 };
 
 type Tag = {
@@ -193,7 +192,7 @@ type UTM = {
   utmTerm?: string;
 };
 
-type AccountInfo = {
+interface IAccountInfo {
   address?: ContactAddress;
   business_goals?: string[];
   business_primary_color?: string;
@@ -208,7 +207,7 @@ type AccountInfo = {
   phone_ext?: string;
   time_zone?: string;
   website?: string;
-};
+}
 
 type ContactAddress = {
   country_code: string;
@@ -251,7 +250,7 @@ type OpportunityContact = {
   phone_number: string;
 };
 
-type IOpportunity = {
+interface IOpportunity {
   affiliate_id?: number;
   contact: OpportunityContact;
   custom_fields?: Array<{
@@ -275,9 +274,9 @@ type IOpportunity = {
     id: number;
     last_name: string;
   };
-};
+}
 
-type IProduct = {
+interface IProduct {
   active?: boolean;
   id?: number;
   product_desc?: string;
@@ -288,9 +287,9 @@ type IProduct = {
   subscription_only?: boolean;
   subscription_plans?: Array<IProductSubscription>;
   url?: string;
-};
+}
 
-type IProductSubscription = {
+interface IProductSubscription {
   active?: boolean;
   cycle_type: "DAY" | "WEEK" | "MONTH" | "YEAR";
   frequency?: number;
@@ -300,10 +299,27 @@ type IProductSubscription = {
   subscription_plan_index?: number;
   subscription_plan_name?: string;
   url?: string;
+}
+
+type ProductsWithPagination = Pagination & {
+  products: Product[];
+  sync_token?: string;
 };
 
-type ProductsWithPagination = PaginationWrapper<IProduct, "products"> & {
-  sync_token?: string;
+type ContactsWithPagination = Pagination & {
+  contacts: Contact[];
+};
+
+type EmailsWithPagination = Pagination & {
+  emails: EmailRecord[];
+};
+
+type TagWithPagination = Pagination & {
+  tags: Tag[];
+};
+
+type OpportunitiesWithPagination = Pagination & {
+  opportunities: Opportunity[];
 };
 
 type Base64Image = `data:image/${
@@ -313,3 +329,15 @@ type Base64Image = `data:image/${
   | "jpeg"};base64${string}`;
 
 type ImageName = `${string}.${"png" | "gif" | "jpg" | "jpeg"}`;
+
+interface IAffiliate {
+  code?: string;
+  contact_id?: number;
+  id?: number;
+  name?: string;
+  notify_on_lead?: boolean;
+  notify_on_sale?: boolean;
+  parent_id?: number;
+  status?: string;
+  track_leads_for?: number;
+}

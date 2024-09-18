@@ -47,7 +47,7 @@ export class Contacts {
     order_direction: "ASCENDING" | "DESCENDING";
     since: string;
     until: string;
-  }): Promise<PaginationWrapper<Contact, "contacts"> | undefined> {
+  }): Promise<ContactsWithPagination | undefined> {
     const params = parameters
       ? createParams(parameters, [
           "email",
@@ -86,7 +86,7 @@ export class Contacts {
     return {
       ...r,
       contacts,
-    } as PaginationWrapper<Contact, "contacts">;
+    };
   }
 
   /**
@@ -261,7 +261,7 @@ export class Contacts {
   async listEmails(
     contactId: number,
     options?: { email?: string; limit?: number; offset?: number }
-  ): Promise<PaginationWrapper<EmailRecord, "emails"> | undefined> {
+  ): Promise<EmailsWithPagination | undefined> {
     const params = options
       ? createParams(options, ["email", "limit", "offset"])
       : undefined;
@@ -270,7 +270,7 @@ export class Contacts {
       `v1/contacts/${contactId}/emails?${params?.toString()}`
     );
     if (!r) return undefined;
-    return r as PaginationWrapper<EmailRecord, "emails">;
+    return r as EmailsWithPagination;
   }
 
   /**
@@ -299,7 +299,7 @@ export class Contacts {
   async listAppliedTags(
     contactId: number,
     options?: { limit?: number; offset?: number }
-  ): Promise<PaginationWrapper<Tag, "tags"> | undefined> {
+  ): Promise<TagWithPagination | undefined> {
     const params = options
       ? createParams(options, ["limit", "offset"])
       : undefined;
@@ -308,7 +308,7 @@ export class Contacts {
       `v1/contacts/${contactId}/tags?${params?.toString()}`
     );
     if (!r) return undefined;
-    return r as PaginationWrapper<Tag, "tags">;
+    return r as TagWithPagination;
   }
 
   /**
@@ -514,7 +514,7 @@ class Contact {
     email?: string;
     limit?: number;
     offset?: number;
-  }): Promise<PaginationWrapper<EmailRecord, "emails"> | undefined> {
+  }): Promise<EmailsWithPagination | undefined> {
     return this.contacts.listEmails(this.id, options);
   }
 
@@ -535,7 +535,7 @@ class Contact {
   getAppliedTags(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<PaginationWrapper<Tag, "tags"> | undefined> {
+  }): Promise<TagWithPagination | undefined> {
     return this.contacts.listAppliedTags(this.id, options);
   }
 
