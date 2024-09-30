@@ -21,3 +21,8 @@ Add tests, refactor.
 ## 0.0.5
 
 Add Ecommerce model(order, subscription, payments, transactions), tests; Increase test coverage
+
+
+## 0.0.6
+
+Add changes to readme file
