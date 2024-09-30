@@ -40,7 +40,7 @@ contact.applyTags(['tag1', 'tag2']);
 - ⬜️ Campaign
 - ⬜️ Company
 - ✅ Contact
-- ⬜️ E-Commerce
+- ✅ E-Commerce
 - ⬜️ Email
 - ⬜️ Email Address
 - ⬜️ File
