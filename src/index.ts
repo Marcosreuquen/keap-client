@@ -3,6 +3,7 @@ import { Contacts } from "./models/Contact";
 import { AccountInfo } from "./models/AccountInfo";
 import { Opportunities } from "./models/Opportunities";
 import { Products } from "./models/Products";
+import { Ecommerce } from "./models/Ecommerce";
 
 class KeapClient {
   private api: Api;
@@ -50,6 +51,10 @@ class KeapClient {
 
   get Products() {
     return new Products(this.api);
+  }
+
+  get Ecommerce() {
+    return new Ecommerce(this.api);
   }
 }
 

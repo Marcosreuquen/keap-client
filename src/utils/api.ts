@@ -28,7 +28,7 @@ class Api {
    * Set the request timeout
    * @param ms - The number of milliseconds before the request times out
    */
-  public setRequestTimeout(ms: number): void {
+  setRequestTimeout(ms: number): void {
     this.timeout = ms;
     this.fetcher.defaults.timeout = ms;
   }
@@ -37,7 +37,7 @@ class Api {
    * Set the number of retries for the requests
    * @param retriesCount - The number of retries to make before giving up
    */
-  public setRetries(retriesCount: number): void {
+  setRetries(retriesCount: number): void {
     this.retries = retriesCount;
     axiosRetry(this.fetcher, { retries: retriesCount });
   }

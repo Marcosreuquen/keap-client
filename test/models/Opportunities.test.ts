@@ -50,5 +50,117 @@ describe("Opportunities", () => {
         "Opportunity 1"
       );
     });
+
+    it("should throw an error if the API call fails", async () => {
+      jest
+        .spyOn(api, "makeApiCall")
+        .mockRejectedValueOnce(new Error("API call failed"));
+      await expect(opportunities.getOpportunities()).rejects.toThrowError(
+        "API call failed"
+      );
+    });
+
+    it("should return undefined if the API call returns null", async () => {
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      const result = await opportunities.getOpportunities();
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("createOpportunity", () => {
+    it("should throw an error if the API call fails", async () => {
+      jest
+        .spyOn(api, "makeApiCall")
+        .mockRejectedValueOnce(new Error("API call failed"));
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      await expect(opportunities.createOpportunity({})).rejects.toThrowError(
+        "API call failed"
+      );
+    });
+
+    it("should return undefined if the API call returns null", async () => {
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      const result = await opportunities.createOpportunity({});
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("replaceOpportunity", () => {
+    it("should throw an error if the API call fails", async () => {
+      jest
+        .spyOn(api, "makeApiCall")
+        .mockRejectedValueOnce(new Error("API call failed"));
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      await expect(opportunities.replaceOpportunity({})).rejects.toThrowError(
+        "API call failed"
+      );
+    });
+
+    it("should return undefined if the API call returns null", async () => {
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      const result = await opportunities.replaceOpportunity({});
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("getOpportunity", () => {
+    it("should throw an error if the API call fails", async () => {
+      jest
+        .spyOn(api, "makeApiCall")
+        .mockRejectedValueOnce(new Error("API call failed"));
+      await expect(opportunities.getOpportunity(1)).rejects.toThrowError(
+        "API call failed"
+      );
+    });
+
+    it("should return undefined if the API call returns null", async () => {
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      const result = await opportunities.getOpportunity(1);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("deleteOpportunity", () => {
+    it("should throw an error if the API call fails", async () => {
+      jest
+        .spyOn(api, "makeApiCall")
+        .mockRejectedValueOnce(new Error("API call failed"));
+      await expect(opportunities.deleteOpportunity(1)).rejects.toThrowError(
+        "API call failed"
+      );
+    });
+
+    it("should return undefined if the API call returns null", async () => {
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      const result = await opportunities.deleteOpportunity(1);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("updateOpportunity", () => {
+    it("should throw an error if the API call fails", async () => {
+      jest
+        .spyOn(api, "makeApiCall")
+        .mockRejectedValueOnce(new Error("API call failed"));
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      await expect(opportunities.updateOpportunity({})).rejects.toThrowError(
+        "API call failed"
+      );
+    });
+
+    it("should return undefined if the API call returns null", async () => {
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+      const result = await opportunities.updateOpportunity({});
+      expect(result).toBeUndefined();
+    });
   });
 });

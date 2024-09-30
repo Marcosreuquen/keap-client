@@ -1,3 +1,5 @@
 local_notes.md
 node_modules
 dist
+coverage
+update.js

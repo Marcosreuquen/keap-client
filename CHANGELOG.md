@@ -17,3 +17,7 @@ Add products and opportunities models.
 ## 0.0.4
 
 Add tests, refactor.
+
+## 0.0.5
+
+Add Ecommerce model(order, subscription, payments, transactions), tests; Increase test coverage

@@ -67,19 +67,19 @@ interface IContact {
 type ContactModel = {
   custom_fields: [
     {
-      default_value: "string";
-      field_name: "string";
+      default_value: string;
+      field_name: string;
       field_type: "Currency";
       id: 0;
-      label: "string";
+      label: string;
       options: [
         {
-          id: "string";
-          label: "string";
+          id: string;
+          label: string;
           options: [
             {
-              id: "string";
-              label: "string";
+              id: string;
+              label: string;
               options: object[];
             }
           ];
@@ -88,7 +88,7 @@ type ContactModel = {
       record_type: "CONTACT";
     }
   ];
-  optional_properties: ["string"];
+  optional_properties: [string];
 };
 
 type CustomField = {
@@ -240,19 +240,19 @@ type OpportunityStage = {
   reasons: Array<string>;
 };
 
-type OpportunityContact = {
-  company_name: string;
-  email: string;
-  first_name: string;
+type ReferenceContact = {
+  company_name?: string;
+  email?: string;
+  first_name?: string;
   id: number;
-  job_title: string;
-  last_name: string;
-  phone_number: string;
+  job_title?: string;
+  last_name?: string;
+  phone_number?: string;
 };
 
 interface IOpportunity {
   affiliate_id?: number;
-  contact: OpportunityContact;
+  contact: ReferenceContact;
   custom_fields?: Array<{
     content: object;
     id: number;
@@ -341,3 +341,163 @@ interface IAffiliate {
   status?: string;
   track_leads_for?: number;
 }
+
+interface IOrderItem {
+  cost?: number;
+  description?: string;
+  discount?: number;
+  id?: number;
+  jobRecurringId?: number;
+  name?: string;
+  notes?: string;
+  price?: number;
+  product?: ProductReference;
+  quantity?: number;
+  specialAmount?: number;
+  specialId?: number;
+  specialPctOrAmt?: number;
+  subscriptionPlan?: IProductSubscription;
+  type?: string;
+}
+
+type ProductReference = {
+  description?: string;
+  id?: number;
+  name?: string;
+  shippable?: boolean;
+  sku?: string;
+  taxable?: boolean;
+};
+
+interface IOrder {
+  allow_payment?: boolean;
+  allow_paypal?: boolean;
+  contact?: ReferenceContact;
+  creation_date?: string;
+  id?: number;
+  invoice_number?: number;
+  lead_affiliate_id?: number;
+  modification_date?: string;
+  notes?: string;
+  order_date: string;
+  order_items: IOrderItem[];
+  order_type: string;
+  payment_plan?: PaymentPlan;
+  recurring?: boolean;
+  refund_total?: number;
+  sales_affiliate_id?: number;
+  shipping_information?: ShippingInformation;
+  source_type?: string;
+  status?: string;
+  terms?: string;
+  title: string;
+  total?: number;
+  total_due?: number;
+  total_paid?: number;
+}
+
+type ShippingInformation = {
+  city?: string;
+  company?: string;
+  country?: string;
+  first_name?: string;
+  id?: number;
+  invoiceToCompany?: boolean;
+  last_name?: string;
+  middle_name?: string;
+  phone?: string;
+  state?: string;
+  street1?: string;
+  street2?: string;
+  zip?: string;
+};
+
+type PaymentPlan = {
+  auto_charge?: boolean;
+  credit_card_id?: number;
+  days_between_payments?: number;
+  initial_payment_amount?: number;
+  initial_payment_date?: string;
+  number_of_payments?: number;
+  payment_gateway?: {
+    merchant_account_id?: number;
+    use_default?: boolean;
+  };
+  plan_start_date?: string;
+};
+
+type OrdersWithPagination = Pagination & {
+  orders: IOrder[];
+};
+
+type createOrderPayment = {
+  apply_to_commissions?: boolean;
+  charge_now?: boolean;
+  credit_card_id?: number;
+  date?: string;
+  notes?: string;
+  payment_amount?: string;
+  payment_gateway_id?: number;
+  payment_method_type?: "CREDIT_CARD" | "CASH" | "CHECK" | "TOKEN";
+};
+
+interface ISubscription {
+  active?: boolean;
+  allow_tax?: boolean;
+  auto_charge?: boolean;
+  billing_amount?: number;
+  billing_cycle?: "DAY" | "WEEK" | "MONTH" | "YEAR";
+  billing_frequency?: number;
+  contact_id?: number;
+  credit_card_id?: number;
+  end_date?: string;
+  id?: number;
+  next_bill_date?: string;
+  payment_gateway_id?: number;
+  product_id?: number;
+  quantity?: number;
+  sale_affiliate_id?: number;
+  start_date?: string;
+  subscription_plan_id?: number;
+  use_default_payment_gateway?: boolean;
+}
+
+type SubscriptionWithPagination = Pagination & {
+  subscriptions: ISubscription[];
+};
+
+type createSubscription = {
+  allow_duplicate?: boolean;
+  allow_tax?: boolean;
+  auto_charge?: boolean;
+  billing_amount?: number;
+  contact_id: number;
+  credit_card_id?: number;
+  first_bill_date?: string;
+  payment_gateway_id?: number;
+  quantity?: number;
+  sale_affiliate_id?: number;
+  subscription_plan_id?: number;
+};
+
+interface ITransaction {
+  amount?: number;
+  collection_method?: string;
+  contact_id?: number;
+  currency?: string;
+  errors?: string;
+  gateway?: string;
+  gateway_account_name?: string;
+  id?: number;
+  order_ids?: string;
+  orders?: IOrder[];
+  paymentDate?: string;
+  status?: string;
+  test?: boolean;
+  transaction_date?: string;
+  type?: string;
+}
+
+type TransactionsWithPagination = Pagination & {
+  transactions: ITransaction[];
+};

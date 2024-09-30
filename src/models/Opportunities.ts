@@ -160,7 +160,7 @@ export class Opportunities {
 
 class Opportunity {
   affiliate_id?: number;
-  contact: OpportunityContact;
+  contact: ReferenceContact;
   custom_fields?: Array<{
     content: object;
     id: number;
