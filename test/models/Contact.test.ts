@@ -77,6 +77,12 @@ describe("Contacts", () => {
       const result = await contacts.createContact({
         given_name: "John",
         family_name: "Doe",
+        email_addresses: [
+          {
+            email: "string@example.com",
+            field: "EMAIL1",
+          },
+        ],
       });
       expect(result).toBeInstanceOf(Object);
       expect(result).toBeDefined();
@@ -89,8 +95,53 @@ describe("Contacts", () => {
       const result = await contacts.createContact({
         given_name: "John",
         family_name: "Doe",
+        email_addresses: [
+          {
+            email: "string@example.com",
+            field: "EMAIL1",
+          },
+        ],
       });
       expect(result).toBeUndefined();
+    });
+    it("should throw if no mail or phone is provided", async () => {
+      await expect(
+        contacts.createContact({
+          given_name: "John",
+          family_name: "Doe",
+        })
+      ).rejects.toThrowError(
+        "Contact must contain at least one item in email_addresses or phone_numbers."
+      );
+    });
+    it("should throw if no country code is provided if region is provided", async () => {
+      await expect(
+        contacts.createContact({
+          given_name: "John",
+          family_name: "Doe",
+          email_addresses: [
+            {
+              email: "string@example.com",
+              field: "EMAIL1",
+            },
+          ],
+          addresses: [
+            // @ts-expect-error - region is required if country_code is provided
+            {
+              region: "CA",
+              line1: "123 Main St",
+              postal_code: "12345",
+              locality: "San Francisco",
+              zip_code: "12345",
+              zip_four: "1234",
+              field: "HOME",
+              line2: "Apt 1",
+            },
+          ],
+        })
+      ).rejects.toThrowError(
+        "Contact must contain a country code if a region is provided."
+      );
     });
   });
 
@@ -182,5 +233,5 @@ describe("Contacts", () => {
     });
   });
 
-  
+
 });

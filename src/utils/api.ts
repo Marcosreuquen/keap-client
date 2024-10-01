@@ -63,8 +63,11 @@ class Api {
       });
       return response.data;
     } catch (error) {
-      console.error(error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(
+          `Error making ${method} request to ${url}: ${error?.message}`
+        );
+      }
     }
   }
 }

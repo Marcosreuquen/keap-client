@@ -26,3 +26,8 @@ Add Ecommerce model(order, subscription, payments, transactions), tests; Increas
 ## 0.0.6
 
 Add changes to readme file
+
+
+## 0.0.7
+
+Fix contact model issues, add some validations; Enhance Error logging

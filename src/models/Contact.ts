@@ -63,7 +63,7 @@ export class Contacts {
         ])
       : undefined;
 
-    const r = await this.api.makeApiCall("get", `v1/contacts${params}`);
+    const r = await this.api.makeApiCall("get", `v1/contacts?${params}`);
 
     // Add this line to assert that r is an object with a 'contacts' property
     const rObj = r as { contacts: IContact[] | null };
@@ -90,16 +90,44 @@ export class Contacts {
   }
 
   /**
-   * Creates a new contact in Keap.
+   * Creates a new contact in Keap. NB: Contact must contain at least one item in email_addresses or phone_numbers and country_code is required if region is specified on the adresses.
    * @param contactData {IContact} - The data to create a contact with ContactData.
    * @returns The newly created contact if the API call was successful, undefined otherwise.
    * @example
-   * const contact = await contacts.createContact({given_name: "Jane", family_name: "Doe"});
+   * const contact = await contacts.createContact(given_name: 'John',
+   *  family_name: 'Doe',
+   * email_addresses: [
+   * {
+   *   email: "string@example.com",
+   *   field: "EMAIL1"
+   * }
+   * ],);
    * console.log(contact);
    * @throws Will throw an error if the API call fails.
    */
   async createContact(contactData: IContact): Promise<Contact | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/contacts", contactData);
+    if (!contactData.email_addresses && !contactData.phone_numbers) {
+      throw new Error(
+        "Contact must contain at least one item in email_addresses or phone_numbers."
+      );
+    }
+    const addressesWithRegionAndNoCountryCode = contactData.addresses?.filter(
+      (address) => address.region && !address.country_code
+    );
+
+    if (
+      addressesWithRegionAndNoCountryCode &&
+      addressesWithRegionAndNoCountryCode.length > 0
+    ) {
+      throw new Error(
+        "Contact must contain a country code if a region is provided."
+      );
+    }
+    const r = await this.api.makeApiCall(
+      "post",
+      "v1/contacts",
+      contactData as IContact
+    );
     if (!r) return undefined;
     return new Contact(this, r as IContact);
   }
