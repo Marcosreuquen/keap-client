@@ -31,3 +31,8 @@ Add changes to readme file
 ## 0.0.7
 
 Fix contact model issues, add some validations; Enhance Error logging
+
+
+## 0.0.8
+
+Add Email, User and Files models
