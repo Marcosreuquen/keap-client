@@ -4,6 +4,9 @@ import { AccountInfo } from "./models/AccountInfo";
 import { Opportunities } from "./models/Opportunities";
 import { Products } from "./models/Products";
 import { Ecommerce } from "./models/Ecommerce";
+import { Files } from "./models/File";
+import { Emails } from "./models/Email";
+import { Users } from "./models/User";
 
 class KeapClient {
   private api: Api;
@@ -55,6 +58,18 @@ class KeapClient {
 
   get Ecommerce() {
     return new Ecommerce(this.api);
+  }
+
+  get Emails() {
+    return new Emails(this.api);
+  }
+
+  get Files() {
+    return new Files(this.api);
+  }
+
+  get Users() {
+    return new Users(this.api);
   }
 }
 

@@ -54,4 +54,14 @@ describe("KeapClient", () => {
     const transactions = keapClient.Ecommerce.Transactions;
     expect(transactions).toBeInstanceOf(Object);
   });
+
+  it("should create a new Files instance", () => {
+    const files = keapClient.Files;
+    expect(files).toBeInstanceOf(Object);
+  });
+
+  it("should create a new Emails instance", () => {
+    const emails = keapClient.Emails;
+    expect(emails).toBeInstanceOf(Object);
+  });
 });

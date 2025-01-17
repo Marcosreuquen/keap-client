@@ -501,3 +501,139 @@ interface ITransaction {
 type TransactionsWithPagination = Pagination & {
   transactions: ITransaction[];
 };
+
+
+type SendEmailRequest = {
+  address_filed?: string;
+  attachments?: string[];
+  contacts: IContact.id[];
+  html_content?: string;
+  plain_content?: string;
+  subject: string;
+  user_id: number;
+};
+
+type FileCategory =
+  | "Attachments"
+  | "Cart"
+  | "Documents"
+  | "Hidden"
+  | "Invoice"
+  | "Logo"
+  | "Tickets"
+  | "WebForm"
+  | "Funnel";
+type FileBoxType =
+  | "Attachment"
+  | "DigitalProduct"
+  | "Funnel"
+  | "LogoThumbnail"
+  | "ReSampledImage"
+  | "StyledCart"
+  | "TemplateThumbnail"
+  | "Unlayer"
+  | "BrandingCenterLogo";
+
+interface IFile {
+  id?: number;
+  category?: FileCategory;
+  contact_id?: number;
+  created_by?: number;
+  date_created?: string;
+  download_url?: string;
+  file_box_type?: FileBoxType;
+  file_name?: string;
+  file_size?: number;
+  last_updated: string;
+  public: boolean;
+  remote_file_key?: string;
+}
+
+type FilesWithPagination = Pagination & {
+  files: IFile[];
+};
+
+type FileUploadRequest = {
+  file_name: string;
+  public?: boolean;
+  file_data: string;
+  contact_id?: number;
+  is_public: boolean;
+  file_association: "CONTACT" | "USER" | "COMPANY";
+};
+
+type FileAssociation = "CONTACT" | "USER" | "COMPANY";
+
+type FileResponse = {
+  file_data: string;
+  file_descriptor: IFile;
+};
+
+interface IUser {
+  address?: ContactAddress;
+  company_name?: string;
+  created_by?: number;
+  date_created?: string;
+  email_address?: string;
+  family_name?: string;
+  fax_numbers?: Array<{
+    field?: string;
+    number?: string;
+    type?: string;
+  }>;
+  given_name?: string;
+  global_user_id?: number;
+  id?: number;
+  infusionsoft_id?: number;
+  job_title?: string;
+  last_updated?: string;
+  last_updated_by?: number;
+  middle_name?: string;
+  partner?: boolean;
+  phone_numbers?: Array<{
+    extension?: string;
+    field?: string;
+    number?: string;
+    type?: string;
+  }>;
+  preferred_name?: string;
+  status?: string;
+  time_zone?: string;
+  website?: string;
+}
+
+type UsersWithPagination = Pagination & {
+  users: IUser[];
+};
+
+type UserCreateRequest = {
+  admin?: boolean;
+  email: string;
+  given_name: string;
+  partner?: boolean;
+};
+
+interface ApiErrorResponse {
+  statusCode: number;
+  message: string;
+  error?: Throwable; // Adjuntar el objeto Throwable si es necesario
+}
+
+interface Throwable {
+  cause?: Throwable;
+  localizedMessage?: string;
+  message?: string;
+  stackTrace?: StackTraceElement[];
+  suppressed?: Throwable[];
+}
+
+interface StackTraceElement {
+  classLoaderName?: string;
+  className?: string;
+  fileName?: string;
+  lineNumber?: number; // integer <int32>
+  methodName?: string;
+  moduleName?: string;
+  moduleVersion?: string;
+  nativeMethod?: boolean;
+}
