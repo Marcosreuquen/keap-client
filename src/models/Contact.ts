@@ -63,7 +63,7 @@ export class Contacts {
         ])
       : undefined;
 
-    const r = await this.api.makeApiCall("get", `v1/contacts?${params}`);
+    const r = await this.api.get(`v1/contacts?${params}`);
 
     // Add this line to assert that r is an object with a 'contacts' property
     const rObj = r as { contacts: IContact[] | null };
@@ -123,11 +123,7 @@ export class Contacts {
         "Contact must contain a country code if a region is provided."
       );
     }
-    const r = await this.api.makeApiCall(
-      "post",
-      "v1/contacts",
-      contactData as IContact
-    );
+    const r = await this.api.post("v1/contacts", contactData as IContact);
     if (!r) return undefined;
     return new Contact(this, r as IContact);
   }
@@ -149,11 +145,7 @@ export class Contacts {
     contactId: number,
     contactData: IContact
   ): Promise<Contact | undefined> {
-    const r = await this.api.makeApiCall(
-      "patch",
-      `v1/contacts/${contactId}`,
-      contactData
-    );
+    const r = await this.api.patch(`v1/contacts/${contactId}`, contactData);
     if (!r) return undefined;
     return new Contact(this, r as IContact);
   }
@@ -173,7 +165,7 @@ export class Contacts {
    * }
    */
   async deleteContact(contactId: number): Promise<boolean | undefined> {
-    const r = this.api.makeApiCall("delete", `v1/contacts/${contactId}`);
+    const r = this.api.delete(`v1/contacts/${contactId}`);
     if (!r) return undefined;
     return true;
   }
@@ -189,7 +181,7 @@ export class Contacts {
    * console.log(contact.family_name); // "Doe"
    */
   async getContact(contactId: number): Promise<Contact | undefined> {
-    const r = await this.api.makeApiCall("get", `v1/contacts/${contactId}`);
+    const r = await this.api.get(`v1/contacts/${contactId}`);
     if (!r) return undefined;
     return new Contact(this, r as IContact);
   }
@@ -203,7 +195,7 @@ export class Contacts {
    * console.log(contactModel);
    */
   async getContactModel(): Promise<ContactModel | undefined> {
-    const r = await this.api.makeApiCall("get", "v1/contacts/model");
+    const r = await this.api.get("v1/contacts/model");
     if (!r) return undefined;
     return r as Promise<ContactModel>;
   }
@@ -217,11 +209,7 @@ export class Contacts {
   async createCustomField(
     customFieldData: CustomField
   ): Promise<CustomField | undefined> {
-    const r = await this.api.makeApiCall(
-      "post",
-      "v1/contacts/customFields",
-      customFieldData
-    );
+    const r = await this.api.post("v1/contacts/customFields", customFieldData);
     if (!r) return undefined;
     return r as Promise<CustomField>;
   }
@@ -249,7 +237,7 @@ export class Contacts {
    * console.log(contact); // {given_name: "John", family_name: "Doe", id: 123}
    */
   async createOrUpdate(contactData: IContact): Promise<Contact | undefined> {
-    const r = await this.api.makeApiCall("put", "v1/contacts", contactData);
+    const r = await this.api.put("v1/contacts", contactData);
     if (!r) return undefined;
     return new Contact(this, r as IContact);
   }
@@ -261,7 +249,7 @@ export class Contacts {
    * @throws Will throw an error if the API call fails.
    */
   getCreditCards(contactId: number): Promise<object | undefined> {
-    return this.api.makeApiCall("get", `v1/contacts/${contactId}/creditCards`);
+    return this.api.get(`v1/contacts/${contactId}/creditCards`);
   }
 
   /**
@@ -274,8 +262,7 @@ export class Contacts {
     contactId: number,
     creditCardData: object
   ): Promise<CreditCard | undefined> {
-    return this.api.makeApiCall(
-      "post",
+    return this.api.post(
       `v1/contacts/${contactId}/creditCards`,
       creditCardData
     ) as Promise<CreditCard>;
@@ -293,8 +280,7 @@ export class Contacts {
     const params = options
       ? createParams(options, ["email", "limit", "offset"])
       : undefined;
-    const r = await this.api.makeApiCall(
-      "get",
+    const r = await this.api.get(
       `v1/contacts/${contactId}/emails?${params?.toString()}`
     );
     if (!r) return undefined;
@@ -311,8 +297,7 @@ export class Contacts {
     contactId: number,
     emailData: EmailRecord
   ): Promise<EmailRecord | undefined> {
-    return this.api.makeApiCall(
-      "post",
+    return this.api.post(
       `v1/contacts/${contactId}/emails`,
       emailData
     ) as Promise<EmailRecord>;
@@ -331,8 +316,7 @@ export class Contacts {
     const params = options
       ? createParams(options, ["limit", "offset"])
       : undefined;
-    const r = await this.api.makeApiCall(
-      "get",
+    const r = await this.api.get(
       `v1/contacts/${contactId}/tags?${params?.toString()}`
     );
     if (!r) return undefined;
@@ -346,7 +330,7 @@ export class Contacts {
    * @returns The result of the API call if it was successful, undefined otherwise.
    */
   applyTags(contactId: number, tagIds: number[]): Promise<object | undefined> {
-    return this.api.makeApiCall("post", `v1/contacts/${contactId}/tags`, {
+    return this.api.post(`v1/contacts/${contactId}/tags`, {
       tagIds,
     });
   }
@@ -358,10 +342,7 @@ export class Contacts {
    * @returns The result of the API call if it was successful, undefined otherwise.
    */
   removeTag(contactId: number, tagId: number): Promise<object | undefined> {
-    return this.api.makeApiCall(
-      "delete",
-      `v1/contacts/${contactId}/tags/${tagId}`
-    );
+    return this.api.delete(`v1/contacts/${contactId}/tags/${tagId}`);
   }
 
   /**
@@ -376,8 +357,7 @@ export class Contacts {
     tagIds: number[],
     data: object
   ): Promise<object | undefined> {
-    return this.api.makeApiCall(
-      "delete",
+    return this.api.delete(
       `v1/contacts/${contactId}/tags?tagIds=${tagIds.join(",")}`,
       data
     );
@@ -390,8 +370,7 @@ export class Contacts {
    * @returns The result of the API call if it was successful, undefined otherwise.
    */
   addUTM(contactId: number, utmData: UTM): Promise<UTM | undefined> {
-    return this.api.makeApiCall(
-      "post",
+    return this.api.post(
       `v1/contacts/${contactId}/utms`,
       utmData
     ) as Promise<UTM>;

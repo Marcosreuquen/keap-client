@@ -64,4 +64,13 @@ describe("KeapClient", () => {
     const emails = keapClient.Emails;
     expect(emails).toBeInstanceOf(Object);
   });
+
+  it("should create a single Emails instance", () => {
+    const emails = keapClient.Emails;
+    const emails2 = keapClient.Emails;
+
+    expect(emails).toBeInstanceOf(Object);
+    expect(emails2).toBeInstanceOf(Object);
+    expect(emails).toBe(emails2);
+  });
 });

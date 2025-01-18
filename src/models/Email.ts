@@ -37,10 +37,7 @@ export class Emails {
           "offset",
         ])
       : undefined;
-    const r = await this.api.makeApiCall(
-      "get",
-      `v1/emails?${params?.toString()}`
-    );
+    const r = await this.api.get(`v1/emails?${params?.toString()}`);
     if (!r) return undefined;
     return r as EmailsWithPagination;
   }
@@ -51,8 +48,7 @@ export class Emails {
    * @returns A promise that resolves to the created email record.
    */
   async createEmail(emailData: EmailRecord): Promise<EmailRecord | undefined> {
-    return (await this.api.makeApiCall(
-      "post",
+    return (await this.api.post(
       `v1/emails`,
       emailData
     )) as Promise<EmailRecord>;
@@ -66,8 +62,7 @@ export class Emails {
   async sendEmail(
     request: SendEmailRequest
   ): Promise<SendEmailRequest | undefined> {
-    return (await this.api.makeApiCall(
-      "post",
+    return (await this.api.post(
       `v1/emails/queue`,
       request
     )) as Promise<SendEmailRequest>;
@@ -81,11 +76,7 @@ export class Emails {
   async createASet(
     emails: EmailRecord[]
   ): Promise<{ emails: EmailRecord[] } | undefined> {
-    return (await this.api.makeApiCall(
-      "post",
-      `v1/emails/sync`,
-      emails
-    )) as Promise<{
+    return (await this.api.post(`v1/emails/sync`, emails)) as Promise<{
       emails: EmailRecord[];
     }>;
   }
@@ -96,10 +87,7 @@ export class Emails {
    * @returns A promise that resolves to the email record.
    */
   async get(id: number): Promise<EmailRecord | undefined> {
-    return (await this.api.makeApiCall(
-      "get",
-      `v1/emails/${id}`
-    )) as Promise<EmailRecord>;
+    return (await this.api.get(`v1/emails/${id}`)) as Promise<EmailRecord>;
   }
 
   /**
@@ -108,7 +96,7 @@ export class Emails {
    * @returns A promise that resolves to true if the email was deleted, otherwise undefined.
    */
   async delete(id: number): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall("delete", `v1/emails/${id}`);
+    const r = await this.api.delete(`v1/emails/${id}`);
     if (!r) return undefined;
     return true;
   }

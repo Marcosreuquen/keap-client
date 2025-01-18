@@ -26,16 +26,13 @@ export class Users {
           "include_partners",
         ])
       : undefined;
-    const r = await this.api.makeApiCall(
-      "get",
-      "v1/users?" + params?.toString()
-    );
+    const r = await this.api.get("v1/users?" + params?.toString());
     if (!r) return undefined;
     return r as UsersWithPagination;
   }
 
   async createUser(data: UserCreateRequest): Promise<IUser | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/users", data);
+    const r = await this.api.post("v1/users", data);
     if (!r) return undefined;
     return r as IUser;
   }

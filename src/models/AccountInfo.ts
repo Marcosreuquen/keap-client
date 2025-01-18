@@ -1,6 +1,7 @@
 import { Api } from "../utils/api";
 
 export class AccountInfo {
+  private static instance: AccountInfo;
   private api: Api;
 
   /**
@@ -16,7 +17,7 @@ export class AccountInfo {
    * @returns The account information if the API call was successful, undefined otherwise.
    */
   public async getAccountInfo(): Promise<IAccountInfo | undefined> {
-    const r = await this.api.makeApiCall("get", "v1/account/profile");
+    const r = await this.api.get("v1/account/profile");
     if (!r) return undefined;
     return r as IAccountInfo;
   }
@@ -28,7 +29,7 @@ export class AccountInfo {
   public async updateAccountInfo(
     data: IAccountInfo
   ): Promise<IAccountInfo | undefined> {
-    const r = await this.api.makeApiCall("put", "v1/account/profile", data);
+    const r = await this.api.put("v1/account/profile", data);
     if (!r) return undefined;
     return r as IAccountInfo;
   }

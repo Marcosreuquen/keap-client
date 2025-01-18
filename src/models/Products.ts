@@ -27,7 +27,7 @@ export class Products {
     if (options) {
       queryParams = createParams(options, ["active", "limit", "offset"]);
     }
-    const r = await this.api.makeApiCall("get", `v1/products?${queryParams}`);
+    const r = await this.api.get(`v1/products?${queryParams}`);
 
     const rObj = r as { products: IProduct[] | null };
 
@@ -58,7 +58,7 @@ export class Products {
    * @throws Will throw an error if the API call fails.
    */
   async createProduct(data: IProduct): Promise<Product | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/products", data);
+    const r = await this.api.post("v1/products", data);
     if (!r) {
       return undefined;
     }
@@ -72,7 +72,7 @@ export class Products {
    * @throws Will throw an error if the API call fails.
    */
   async getProduct(productId: number): Promise<Product | undefined> {
-    const r = await this.api.makeApiCall("get", `v1/products/${productId}`);
+    const r = await this.api.get(`v1/products/${productId}`);
     if (!r) {
       return undefined;
     }
@@ -86,11 +86,7 @@ export class Products {
    * @throws Will throw an error if the API call fails.
    */
   async updateProduct(data: IProduct): Promise<Product | undefined> {
-    const r = await this.api.makeApiCall(
-      "patch",
-      `v1/products/${data.id}`,
-      data
-    );
+    const r = await this.api.patch(`v1/products/${data.id}`, data);
     if (!r) {
       return undefined;
     }
@@ -104,7 +100,7 @@ export class Products {
    * @throws Will throw an error if the API call fails.
    */
   async deleteProduct(productId: number): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall("delete", `v1/products/${productId}`);
+    const r = await this.api.delete(`v1/products/${productId}`);
     if (!r) {
       return undefined;
     }
@@ -127,15 +123,11 @@ export class Products {
     checksum?: string
   ): Promise<boolean | undefined> {
     //Max payload 3 megabytes, the file_data is base64 encoded.
-    const r = await this.api.makeApiCall(
-      "post",
-      `v1/products/${productId}/image`,
-      {
-        checksum,
-        file_data: fileData,
-        file_name: fileName,
-      }
-    );
+    const r = await this.api.post(`v1/products/${productId}/image`, {
+      checksum,
+      file_data: fileData,
+      file_name: fileName,
+    });
     if (!r) {
       return undefined;
     }
@@ -149,10 +141,7 @@ export class Products {
    * @throws Will throw an error if the API call fails.
    */
   async deleteProductImage(productId: number): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall(
-      "delete",
-      `v1/products/${productId}/image`
-    );
+    const r = await this.api.delete(`v1/products/${productId}/image`);
     if (!r) {
       return undefined;
     }
@@ -170,8 +159,7 @@ export class Products {
     productId: number,
     data: IProductSubscription
   ): Promise<IProductSubscription | undefined> {
-    const r = await this.api.makeApiCall(
-      "post",
+    const r = await this.api.post(
       `v1/products/${productId}/subscriptions`,
       data
     );
@@ -191,8 +179,7 @@ export class Products {
     productId: number,
     subscriptionId: number
   ): Promise<IProductSubscription | undefined> {
-    const r = await this.api.makeApiCall(
-      "get",
+    const r = await this.api.get(
       `v1/products/${productId}/subscriptions/${subscriptionId}`
     );
     if (!r) {
@@ -212,8 +199,7 @@ export class Products {
     productId: number,
     subscriptionId: number
   ): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall(
-      "delete",
+    const r = await this.api.delete(
       `v1/products/${productId}/subscriptions/${subscriptionId}`
     );
     if (!r) {

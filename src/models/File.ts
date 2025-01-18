@@ -37,10 +37,7 @@ export class Files {
           "offset",
         ])
       : undefined;
-    const r = await this.api.makeApiCall(
-      "get",
-      `v1/files?${params?.toString()}`
-    );
+    const r = await this.api.get(`v1/files?${params?.toString()}`);
     if (!r) return undefined;
     return r as FilesWithPagination;
   }
@@ -51,7 +48,7 @@ export class Files {
    * @returns A promise that resolves to the uploaded file response.
    */
   async uploadFile(file: FileUploadRequest): Promise<FileResponse | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/files", file);
+    const r = await this.api.post("v1/files", file);
     if (!r) return undefined;
     return r as FileResponse;
   }
@@ -62,7 +59,7 @@ export class Files {
    * @returns A promise that resolves to the file response.
    */
   async getFile(id: number): Promise<FileResponse | undefined> {
-    const r = await this.api.makeApiCall("get", `v1/files/${id}`);
+    const r = await this.api.get(`v1/files/${id}`);
     if (!r) return undefined;
     return r as FileResponse;
   }
@@ -77,7 +74,7 @@ export class Files {
     id: number,
     file: FileUploadRequest
   ): Promise<FileResponse | undefined> {
-    const r = await this.api.makeApiCall("put", `v1/files/${id}`, file);
+    const r = await this.api.put(`v1/files/${id}`, file);
     if (!r) return undefined;
     return r as FileResponse;
   }
@@ -88,7 +85,7 @@ export class Files {
    * @returns A promise that resolves to true if the file was deleted, otherwise undefined.
    */
   async deleteFile(id: number): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall("delete", `v1/files/${id}`);
+    const r = await this.api.delete(`v1/files/${id}`);
     if (!r) return undefined;
     return true;
   }

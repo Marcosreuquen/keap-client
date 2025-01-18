@@ -41,13 +41,12 @@ describe("Files", () => {
         next: "",
         previous: "",
       };
-      (api.makeApiCall as jest.Mock).mockResolvedValue(mockResponse);
+      (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
       const options = { contact_id: 1, name: "testFile" };
       const result = await files.listFiles(options);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith(
-        "get",
+      expect(api.get).toHaveBeenCalledWith(
         "v1/files?contact_id=1&name=testFile"
       );
       expect(result).toEqual(mockResponse);
@@ -57,7 +56,7 @@ describe("Files", () => {
     });
 
     it("should return undefined if API call fails", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+      (api.get as jest.Mock).mockResolvedValue(undefined);
 
       const result = await files.listFiles();
 
@@ -67,20 +66,16 @@ describe("Files", () => {
 
   describe("uploadFile", () => {
     it("should upload a file", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(fileResponseMock);
+      (api.post as jest.Mock).mockResolvedValue(fileResponseMock);
 
       const result = await files.uploadFile(fileUploadRequestMock);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith(
-        "post",
-        "v1/files",
-        fileUploadRequestMock
-      );
+      expect(api.post).toHaveBeenCalledWith("v1/files", fileUploadRequestMock);
       expect(result).toEqual(fileResponseMock);
     });
 
     it("should return undefined if API call fails", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+      (api.post as jest.Mock).mockResolvedValue(undefined);
 
       const result = await files.uploadFile(fileUploadRequestMock);
 
@@ -90,16 +85,16 @@ describe("Files", () => {
 
   describe("getFile", () => {
     it("should retrieve a file by ID", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(fileResponseMock);
+      (api.get as jest.Mock).mockResolvedValue(fileResponseMock);
 
       const result = await files.getFile(1);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith("get", "v1/files/1");
+      expect(api.get).toHaveBeenCalledWith("v1/files/1");
       expect(result).toEqual(fileResponseMock);
     });
 
     it("should return undefined if API call fails", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+      (api.get as jest.Mock).mockResolvedValue(undefined);
 
       const result = await files.getFile(1);
 
@@ -109,20 +104,16 @@ describe("Files", () => {
 
   describe("replaceFile", () => {
     it("should replace a file by ID", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(fileResponseMock);
+      (api.put as jest.Mock).mockResolvedValue(fileResponseMock);
 
       const result = await files.replaceFile(1, fileUploadRequestMock);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith(
-        "put",
-        "v1/files/1",
-        fileUploadRequestMock
-      );
+      expect(api.put).toHaveBeenCalledWith("v1/files/1", fileUploadRequestMock);
       expect(result).toEqual(fileResponseMock);
     });
 
     it("should return undefined if API call fails", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+      (api.put as jest.Mock).mockResolvedValue(undefined);
 
       const result = await files.replaceFile(1, fileUploadRequestMock);
 
@@ -132,16 +123,16 @@ describe("Files", () => {
 
   describe("deleteFile", () => {
     it("should delete a file by ID", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(true);
+      (api.delete as jest.Mock).mockResolvedValue(true);
 
       const result = await files.deleteFile(1);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith("delete", "v1/files/1");
+      expect(api.delete).toHaveBeenCalledWith("v1/files/1");
       expect(result).toBe(true);
     });
 
     it("should return undefined if API call fails", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+      (api.delete as jest.Mock).mockResolvedValue(undefined);
 
       const result = await files.deleteFile(1);
 

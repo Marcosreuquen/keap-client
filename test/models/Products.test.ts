@@ -16,7 +16,7 @@ describe("Products", () => {
 
   describe("getProducts", () => {
     it("should return undefined if no products are found", async () => {
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(undefined);
+      jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
       const result = await products.getProducts();
       expect(result).toBeUndefined();
     });
@@ -26,7 +26,7 @@ describe("Products", () => {
         { id: 1, product_name: "Product 1" },
         { id: 2, product_name: "Product 2" },
       ];
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce({
+      jest.spyOn(api, "get").mockResolvedValueOnce({
         products: productsData,
         count: productsData.length,
         next: "some-url",
@@ -41,7 +41,7 @@ describe("Products", () => {
     });
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "get")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(products.getProducts()).rejects.toThrowError(
         "API call failed"
@@ -50,7 +50,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "get").mockResolvedValueOnce(null);
       const result = await products.getProducts();
       expect(result).toBeUndefined();
     });
@@ -68,9 +68,7 @@ describe("Products", () => {
         cycle_type: "MONTH",
         plan_price: 10,
       };
-      jest
-        .spyOn(api, "makeApiCall")
-        .mockResolvedValueOnce(subscriptionPlanData);
+      jest.spyOn(api, "post").mockResolvedValueOnce(subscriptionPlanData);
       const result = await products.createASubscriptionPlan(productId, data);
       expect(result).toEqual(subscriptionPlanData);
     });
@@ -82,7 +80,7 @@ describe("Products", () => {
         plan_price: 10,
       };
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "post")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(
         products.createASubscriptionPlan(productId, data)
@@ -93,7 +91,7 @@ describe("Products", () => {
   describe("createProduct", () => {
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "post")
         .mockRejectedValueOnce(new Error("API call failed"));
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       await expect(products.createProduct({})).rejects.toThrowError(
@@ -103,7 +101,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "post").mockResolvedValueOnce(null);
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       const result = await products.createProduct({});
       expect(result).toBeUndefined();
@@ -113,7 +111,7 @@ describe("Products", () => {
   describe("getProduct", () => {
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "get")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(products.getProduct(1)).rejects.toThrowError(
         "API call failed"
@@ -122,7 +120,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "get").mockResolvedValueOnce(null);
       const result = await products.getProduct(1);
       expect(result).toBeUndefined();
     });
@@ -131,7 +129,7 @@ describe("Products", () => {
   describe("deleteProduct", () => {
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "delete")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(products.deleteProduct(1)).rejects.toThrowError(
         "API call failed"
@@ -140,7 +138,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "delete").mockResolvedValueOnce(null);
       const result = await products.deleteProduct(1);
       expect(result).toBeUndefined();
     });
@@ -149,7 +147,7 @@ describe("Products", () => {
   describe("updateProduct", () => {
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "patch")
         .mockRejectedValueOnce(new Error("API call failed"));
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       await expect(products.updateProduct({})).rejects.toThrowError(
@@ -159,7 +157,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "patch").mockResolvedValueOnce(null);
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       const result = await products.updateProduct({});
       expect(result).toBeUndefined();
@@ -169,7 +167,7 @@ describe("Products", () => {
   describe("createASubscriptionPlan", () => {
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "post")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(
         // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
@@ -179,7 +177,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "post").mockResolvedValueOnce(null);
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       const result = await products.createASubscriptionPlan(1, {});
       expect(result).toBeUndefined();
@@ -189,7 +187,7 @@ describe("Products", () => {
   describe("getASubscriptionPlan", () => {
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "get")
         .mockRejectedValueOnce(new Error("API call failed"));
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       await expect(products.getASubscriptionPlan()).rejects.toThrowError(
@@ -199,7 +197,7 @@ describe("Products", () => {
 
     it("should return undefined if the API call returns null", async () => {
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(null);
+      jest.spyOn(api, "get").mockResolvedValueOnce(null);
       // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
       const result = await products.getASubscriptionPlan();
       expect(result).toBeUndefined();

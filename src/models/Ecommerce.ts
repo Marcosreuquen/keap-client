@@ -52,10 +52,7 @@ class Order {
           "contact_id",
         ])
       : "";
-    const r = await this.api.makeApiCall(
-      "get",
-      `v1/orders?${queryParams.toString()}`
-    );
+    const r = await this.api.get(`v1/orders?${queryParams.toString()}`);
     if (!r) return undefined;
     return r as OrdersWithPagination;
   }
@@ -73,7 +70,7 @@ class Order {
     },
     data: IOrder
   ): Promise<IOrder | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/orders", {
+    const r = await this.api.post("v1/orders", {
       ...options,
       ...data,
     });
@@ -82,13 +79,13 @@ class Order {
   }
 
   async getOrder(id: number): Promise<IOrder | undefined> {
-    const r = await this.api.makeApiCall("get", `v1/orders/${id}`);
+    const r = await this.api.get(`v1/orders/${id}`);
     if (!r) return undefined;
     return r as IOrder;
   }
 
   async deleteOrder(id: number): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall("delete", `v1/orders/${id}`);
+    const r = await this.api.delete(`v1/orders/${id}`);
     if (!r) return undefined;
     return true;
   }
@@ -102,11 +99,7 @@ class Order {
       quantity?: number;
     }
   ): Promise<IOrderItem | undefined> {
-    const r = await this.api.makeApiCall(
-      "post",
-      `v1/orders/${orderId}/items`,
-      data
-    );
+    const r = await this.api.post(`v1/orders/${orderId}/items`, data);
     if (!r) return undefined;
     return r as IOrderItem;
   }
@@ -115,19 +108,13 @@ class Order {
     orderId: number,
     itemId: number
   ): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall(
-      "delete",
-      `v1/orders/${orderId}/items/${itemId}`
-    );
+    const r = await this.api.delete(`v1/orders/${orderId}/items/${itemId}`);
     if (!r) return undefined;
     return true;
   }
 
   async getOrderPayments(orderId: number): Promise<object | undefined> {
-    const r = await this.api.makeApiCall(
-      "get",
-      `v1/orders/${orderId}/payments`
-    );
+    const r = await this.api.get(`v1/orders/${orderId}/payments`);
     if (!r) return undefined;
     return r;
   }
@@ -136,11 +123,7 @@ class Order {
     orderId: number,
     data: createOrderPayment
   ): Promise<object | undefined> {
-    const r = await this.api.makeApiCall(
-      "post",
-      `v1/orders/${orderId}/payments`,
-      data
-    );
+    const r = await this.api.post(`v1/orders/${orderId}/payments`, data);
     if (!r) return undefined;
     return r;
   }
@@ -165,8 +148,7 @@ class Order {
         ])
       : "";
 
-    const r = await this.api.makeApiCall(
-      "get",
+    const r = await this.api.get(
       `v1/orders/${orderId}/transactions?${queryParams.toString()}`
     );
 
@@ -183,7 +165,7 @@ class Subscription {
   }
 
   async getSubscriptions(): Promise<SubscriptionWithPagination | undefined> {
-    const r = await this.api.makeApiCall("get", "v1/subscriptions");
+    const r = await this.api.get("v1/subscriptions");
     if (!r) return undefined;
     return r as SubscriptionWithPagination;
   }
@@ -191,7 +173,7 @@ class Subscription {
   async createSubscription(
     data: createSubscription
   ): Promise<ISubscription | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/subscriptions", data);
+    const r = await this.api.post("v1/subscriptions", data);
     if (!r) return undefined;
     return r as ISubscription;
   }
@@ -221,16 +203,13 @@ class Transaction {
         ])
       : "";
 
-    const r = await this.api.makeApiCall(
-      "get",
-      `v1/transactions?${queryParams.toString()}`
-    );
+    const r = await this.api.get(`v1/transactions?${queryParams.toString()}`);
     if (!r) return undefined;
     return r as TransactionsWithPagination;
   }
 
   async getTransaction(id: number): Promise<ITransaction | undefined> {
-    const r = await this.api.makeApiCall("get", `v1/transactions/${id}`);
+    const r = await this.api.get(`v1/transactions/${id}`);
     if (!r) return undefined;
     return r as ITransaction;
   }

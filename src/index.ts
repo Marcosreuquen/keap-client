@@ -10,6 +10,14 @@ import { Users } from "./models/User";
 
 class KeapClient {
   private api: Api;
+  private _accountInfo?: AccountInfo;
+  private _contacts?: Contacts;
+  private _opportunities?: Opportunities;
+  private _products?: Products;
+  private _ecommerce?: Ecommerce;
+  private _files?: Files;
+  private _emails?: Emails;
+  private _users?: Users;
 
   /**
    * Creates a new instance of KeapClient.
@@ -37,39 +45,64 @@ class KeapClient {
    * @returns An instance of AccountInfo.
    */
   get AccountInfo() {
-    return new AccountInfo(this.api);
+    if (!this._accountInfo) {
+      this._accountInfo = new AccountInfo(this.api);
+    }
+    return this._accountInfo;
   }
+
   /**
    * Gets an instance of Contact that can be used to create, update, delete,
    * and fetch contacts.
    * @returns An instance of Contact.
    */
   get Contacts() {
-    return new Contacts(this.api);
+    if (!this._contacts) {
+      this._contacts = new Contacts(this.api);
+    }
+    return this._contacts;
   }
 
   get Opportunities() {
-    return new Opportunities(this.api);
+    if (!this._opportunities) {
+      this._opportunities = new Opportunities(this.api);
+    }
+    return this._opportunities;
   }
 
   get Products() {
-    return new Products(this.api);
+    if (!this._products) {
+      this._products = new Products(this.api);
+    }
+    return this._products;
   }
 
   get Ecommerce() {
-    return new Ecommerce(this.api);
+    if (!this._ecommerce) {
+      this._ecommerce = new Ecommerce(this.api);
+    }
+    return this._ecommerce;
   }
 
   get Emails() {
-    return new Emails(this.api);
+    if (!this._emails) {
+      this._emails = new Emails(this.api);
+    }
+    return this._emails;
   }
 
   get Files() {
-    return new Files(this.api);
+    if (!this._files) {
+      this._files = new Files(this.api);
+    }
+    return this._files;
   }
 
   get Users() {
-    return new Users(this.api);
+    if (!this._users) {
+      this._users = new Users(this.api);
+    }
+    return this._users;
   }
 }
 

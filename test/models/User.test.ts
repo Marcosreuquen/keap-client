@@ -32,27 +32,26 @@ describe("Users", () => {
   });
 
   describe("listUsers", () => {
-    it("should call api.makeApiCall with correct parameters", async () => {
+    it("should call api.get with correct parameters", async () => {
       const mockResponse = {
         users: [mockUser],
         count: 1,
         next: "",
         previous: "",
       };
-      (api.makeApiCall as jest.Mock).mockResolvedValue(mockResponse);
+      (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
       const options = { include_inactive: true, limit: 10, offset: 0 };
       const result = await users.listUsers(options);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith(
-        "get",
+      expect(api.get).toHaveBeenCalledWith(
         "v1/users?include_inactive=true&limit=10&offset=0"
       );
       expect(result).toBe(mockResponse);
     });
 
-    it("should return undefined if api.makeApiCall returns undefined", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+    it("should return undefined if api.get returns undefined", async () => {
+      (api.get as jest.Mock).mockResolvedValue(undefined);
 
       const result = await users.listUsers();
 
@@ -61,20 +60,16 @@ describe("Users", () => {
   });
 
   describe("createUser", () => {
-    it("should call api.makeApiCall with correct parameters", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(mockUser);
+    it("should call api.post with correct parameters", async () => {
+      (api.post as jest.Mock).mockResolvedValue(mockUser);
       const result = await users.createUser(mockUserCreateRequest);
 
-      expect(api.makeApiCall).toHaveBeenCalledWith(
-        "post",
-        "v1/users",
-        mockUserCreateRequest
-      );
+      expect(api.post).toHaveBeenCalledWith("v1/users", mockUserCreateRequest);
       expect(result).toBe(mockUser);
     });
 
-    it("should return undefined if api.makeApiCall returns undefined", async () => {
-      (api.makeApiCall as jest.Mock).mockResolvedValue(undefined);
+    it("should return undefined if api.post returns undefined", async () => {
+      (api.post as jest.Mock).mockResolvedValue(undefined);
 
       const result = await users.createUser(mockUserCreateRequest);
 

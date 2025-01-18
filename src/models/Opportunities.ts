@@ -47,10 +47,7 @@ export class Opportunities {
         "search_term",
       ]);
     }
-    const r = await this.api.makeApiCall(
-      "get",
-      `v1/opportinities?${queryParams}`
-    );
+    const r = await this.api.get(`v1/opportinities?${queryParams}`);
 
     // Add this line to assert that r is an object with a 'opportunities' property
     const rObj = r as { opportunities: IOpportunity[] | null };
@@ -92,7 +89,7 @@ export class Opportunities {
   async createOpportunity(
     data: IOpportunity
   ): Promise<Opportunity | undefined> {
-    const r = await this.api.makeApiCall("post", "v1/opportunities", data);
+    const r = await this.api.post("v1/opportunities", data);
     if (!r) return undefined;
     return new Opportunity(this, r as IOpportunity);
   }
@@ -106,11 +103,7 @@ export class Opportunities {
   async replaceOpportunity(
     data: IOpportunity
   ): Promise<Opportunity | undefined> {
-    const r = await this.api.makeApiCall(
-      "put",
-      `v1/opportunities/${data.id}`,
-      data
-    );
+    const r = await this.api.put(`v1/opportunities/${data.id}`, data);
     if (!r) return undefined;
     return new Opportunity(this, r as IOpportunity);
   }
@@ -122,7 +115,7 @@ export class Opportunities {
    * @throws Will throw an error if the API call fails.
    */
   async getOpportunity(id: number): Promise<Opportunity | undefined> {
-    const r = await this.api.makeApiCall("get", `v1/opportunities/${id}`);
+    const r = await this.api.get(`v1/opportunities/${id}`);
     if (!r) return undefined;
     return new Opportunity(this, r as IOpportunity);
   }
@@ -134,7 +127,7 @@ export class Opportunities {
    * @throws Will throw an error if the API call fails.
    */
   async deleteOpportunity(id: number): Promise<boolean | undefined> {
-    const r = await this.api.makeApiCall("delete", `v1/opportunities/${id}`);
+    const r = await this.api.delete(`v1/opportunities/${id}`);
     if (!r) return undefined;
     return true;
   }
@@ -148,11 +141,7 @@ export class Opportunities {
   async updateOpportunity(
     data: IOpportunity
   ): Promise<Opportunity | undefined> {
-    const r = await this.api.makeApiCall(
-      "patch",
-      `v1/opportunities/${data.id}`,
-      data
-    );
+    const r = await this.api.patch(`v1/opportunities/${data.id}`, data);
     if (!r) return undefined;
     return new Opportunity(this, r as IOpportunity);
   }

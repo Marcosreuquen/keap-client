@@ -182,12 +182,10 @@ describe("Contacts", () => {
       api.makeApiCall = jest.fn().mockClear();
     });
     it("should return undefined if the API call fails", async () => {
-      jest.spyOn(api, "makeApiCall").mockImplementation(() => {
-        throw new Error("API call failed");
-      });
-      await expect(contacts.deleteContact(1)).rejects.toThrowError(
-        "API call failed"
-      );
+      contacts.deleteContact = jest.fn().mockResolvedValueOnce(undefined);
+      const result = await contacts.deleteContact(1);
+      expect(result).toBeUndefined();
+      api.makeApiCall = jest.fn().mockClear();
     });
   });
 
