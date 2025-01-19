@@ -2,6 +2,7 @@ class Api {
   private apiKey: string | null = null;
   private timeout: number | null = null;
   private retries: number | null = null;
+  public baseUrl: string = "https://api.infusionsoft.com/crm/rest/v1/";
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
@@ -82,7 +83,7 @@ class Api {
 
     try {
       const response = await fetchWithRetry(
-        `https://api.infusionsoft.com/crm/rest/${url}`,
+        `${this.baseUrl}${url}`,
         fetchOptions,
         this.retries || 1
       );
