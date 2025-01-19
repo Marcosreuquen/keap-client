@@ -38,8 +38,8 @@ describe("Files", () => {
       const mockResponse = {
         count: 1,
         files: [fileMock],
-        next: "",
-        previous: "",
+        next: "http://example.com/next",
+        previous: "http://example.com/previous",
       };
       (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
@@ -49,10 +49,9 @@ describe("Files", () => {
       expect(api.get).toHaveBeenCalledWith(
         "v1/files?contact_id=1&name=testFile"
       );
-      expect(result).toEqual(mockResponse);
-      expect(result?.files[0]).toEqual(fileMock);
-      expect(result?.count).toEqual(1);
-      expect(result?.files[0]?.contact_id).toEqual(1);
+      expect(result?.getItems()).toEqual(mockResponse.files);
+      expect(result?.getItems()[0]).toEqual(fileMock);
+      expect(result?.getCount()).toEqual(mockResponse.count);
     });
 
     it("should return undefined if API call fails", async () => {

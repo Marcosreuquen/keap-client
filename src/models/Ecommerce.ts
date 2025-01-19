@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Ecommerce {
@@ -40,7 +41,7 @@ class Order {
     paid?: boolean;
     order?: "order_date" | "update_date";
     contact_id?: number;
-  }): Promise<OrdersWithPagination | undefined> {
+  }): Promise<Paginator<IOrder> | undefined> {
     const queryParams = params
       ? createParams(params, [
           "limit",
@@ -54,7 +55,7 @@ class Order {
       : "";
     const r = await this.api.get(`v1/orders?${queryParams.toString()}`);
     if (!r) return undefined;
-    return r as OrdersWithPagination;
+    return Paginator.wrap(this.api, r, "orders");
   }
 
   async createOrder(
@@ -137,7 +138,7 @@ class Order {
       since?: string;
       until?: string;
     }
-  ): Promise<object | undefined> {
+  ): Promise<Paginator<ITransaction> | undefined> {
     const queryParams = options
       ? createParams(options, [
           "contact_id",
@@ -153,7 +154,7 @@ class Order {
     );
 
     if (!r) return undefined;
-    return r;
+    return Paginator.wrap(this.api, r, "transactions");
   }
 }
 
@@ -192,7 +193,7 @@ class Transaction {
     offset?: number;
     since?: string;
     until?: string;
-  }): Promise<TransactionsWithPagination | undefined> {
+  }): Promise<Paginator<ITransaction> | undefined> {
     const queryParams = options
       ? createParams(options, [
           "contact_id",
@@ -205,7 +206,7 @@ class Transaction {
 
     const r = await this.api.get(`v1/transactions?${queryParams.toString()}`);
     if (!r) return undefined;
-    return r as TransactionsWithPagination;
+    return Paginator.wrap(this.api, r, "transactions");
   }
 
   async getTransaction(id: number): Promise<ITransaction | undefined> {

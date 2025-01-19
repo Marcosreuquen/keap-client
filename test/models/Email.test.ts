@@ -25,8 +25,8 @@ describe("Email", () => {
       const mockResponse = {
         emails: [emailMock],
         count: 1,
-        next: "",
-        previous: "",
+        next: "http://example.com/next",
+        previous: "http://example.com/previous",
       };
       (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
@@ -34,11 +34,8 @@ describe("Email", () => {
 
       expect(api.get).toHaveBeenCalledWith("v1/emails?contact_id=1");
       expect(result).toBeDefined();
-      expect(result).toEqual(mockResponse);
-      expect(result?.emails).toBeDefined();
-      expect(result?.count).toEqual(1);
-      expect(result?.emails[0]).toEqual(emailMock);
-      expect(result?.emails[0]?.contact_id).toEqual(1);
+      expect(result?.getItems()).toEqual(mockResponse.emails);
+      expect(result?.getCount()).toEqual(1);
     });
 
     it("should return undefined if API call fails", async () => {

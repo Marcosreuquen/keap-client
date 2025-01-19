@@ -36,8 +36,8 @@ describe("Users", () => {
       const mockResponse = {
         users: [mockUser],
         count: 1,
-        next: "",
-        previous: "",
+        next: "http://example.com/next",
+        previous: "http://example.com/previous",
       };
       (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
@@ -47,7 +47,8 @@ describe("Users", () => {
       expect(api.get).toHaveBeenCalledWith(
         "v1/users?include_inactive=true&limit=10&offset=0"
       );
-      expect(result).toBe(mockResponse);
+      expect(result?.getItems()).toBe(mockResponse.users);
+      expect(result?.getCount()).toBe(mockResponse.count);
     });
 
     it("should return undefined if api.get returns undefined", async () => {

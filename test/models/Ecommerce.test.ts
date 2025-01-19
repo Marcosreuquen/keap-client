@@ -71,9 +71,16 @@ describe("Order", () => {
       const result = await order.getOrders();
       expect(result).toBeInstanceOf(Object);
       expect(result).toBeDefined();
-      expect(result).toHaveProperty("orders");
-      expect(result).toHaveProperty("count");
-      expect(result?.count).toBe(ordersData.length);
+      expect(result?.getCount()).toBe(ordersData.length);
+      expect(result?.getItems()).toHaveLength(ordersData.length);
+      expect(typeof result?.next).toBe("function");
+      expect(typeof result?.previous).toBe("function");
+      const firstOrder = result?.getItems()[0];
+      expect(firstOrder?.id).toBe(ordersData[0]?.id);
+      expect(firstOrder?.order_date).toBe(ordersData[0]?.order_date);
+
+      expect(firstOrder?.order_type).toBe(ordersData[0]?.order_type);
+      expect(firstOrder?.title).toBe(ordersData[0]?.title);
     });
   });
 
@@ -402,9 +409,17 @@ describe("Transaction", () => {
           type: "REFUND",
         },
       ];
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(transactionsData);
+      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce({
+        transactions: transactionsData,
+        count: transactionsData.length,
+        next: "https://example.com",
+        previous: "https://example.com",
+      });
       const result = await transaction.getTransactions();
-      expect(result).toEqual(transactionsData);
+      expect(result?.getCount()).toBe(transactionsData.length);
+      expect(result?.getItems()).toEqual(transactionsData);
+      expect(typeof result?.next).toBe("function");
+      expect(typeof result?.previous).toBe("function");
     });
 
     it("should throw an error if the API call fails", async () => {

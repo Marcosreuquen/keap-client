@@ -60,6 +60,4 @@ contact.applyTags(['tag1', 'tag2']);
 
 - FEATURE Implement Tags Model.
 - FEATURE Implement Task Model
-- REFACTOR Refactor api fetching to not depend on any third party libraries.
-- REFACTOR Add support for pagination.
 - REFACTOR Add support for throwables and error handling.

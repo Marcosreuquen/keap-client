@@ -1,5 +1,6 @@
 import { Contacts } from "../../src/models/Contact";
 import { Api } from "../../src/utils/api";
+import { Paginator } from "../../src/utils/paginator";
 
 describe("Contacts", () => {
   let api: Api;
@@ -34,14 +35,17 @@ describe("Contacts", () => {
       ];
       jest.spyOn(api, "makeApiCall").mockResolvedValueOnce({
         contacts: contactsData,
+        count: contactsData.length,
+        next: "https://example.com",
+        previous: "https://example.com",
       });
       const result = await contacts.getContacts();
-      expect(result).toBeInstanceOf(Object);
+      expect(result).toBeInstanceOf(Paginator<IContact>);
       expect(result).toBeDefined();
-      expect(result).toHaveProperty("contacts");
-      /*       expect(result.contacts).toEqual(
-        contactsData.map((c) => new Contact(contacts, c))
-      ); */
+
+      expect(result?.getItems()).toHaveLength(contactsData.length);
+      expect(typeof result?.next).toBe("function");
+      expect(typeof result?.previous).toBe("function");
     });
 
     it("should throw an error if the API call fails", async () => {
@@ -230,6 +234,4 @@ describe("Contacts", () => {
       expect(result).toBeUndefined();
     });
   });
-
-
 });

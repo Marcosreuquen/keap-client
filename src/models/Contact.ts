@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Contacts {
@@ -47,7 +48,9 @@ export class Contacts {
     order_direction: "ASCENDING" | "DESCENDING";
     since: string;
     until: string;
-  }): Promise<ContactsWithPagination | undefined> {
+  }): Promise<Paginator<IContact> | undefined> {
+    //! // IMPORTANT use this case as an example of how the paginator works and how the caller method should look
+
     const params = parameters
       ? createParams(parameters, [
           "email",
@@ -82,11 +85,13 @@ export class Contacts {
       }
       return new Contact(this, c);
     });
+    const paginator: Paginator<IContact> = Paginator.wrap(
+      this.api,
+      { ...r, contacts },
+      "contacts"
+    );
 
-    return {
-      ...r,
-      contacts,
-    };
+    return paginator;
   }
 
   /**
@@ -276,7 +281,7 @@ export class Contacts {
   async listEmails(
     contactId: number,
     options?: { email?: string; limit?: number; offset?: number }
-  ): Promise<EmailsWithPagination | undefined> {
+  ): Promise<Paginator<EmailRecord> | undefined> {
     const params = options
       ? createParams(options, ["email", "limit", "offset"])
       : undefined;
@@ -284,7 +289,7 @@ export class Contacts {
       `v1/contacts/${contactId}/emails?${params?.toString()}`
     );
     if (!r) return undefined;
-    return r as EmailsWithPagination;
+    return Paginator.wrap(this.api, r, "emails");
   }
 
   /**
@@ -312,7 +317,7 @@ export class Contacts {
   async listAppliedTags(
     contactId: number,
     options?: { limit?: number; offset?: number }
-  ): Promise<TagWithPagination | undefined> {
+  ): Promise<Paginator<Tag> | undefined> {
     const params = options
       ? createParams(options, ["limit", "offset"])
       : undefined;
@@ -320,7 +325,7 @@ export class Contacts {
       `v1/contacts/${contactId}/tags?${params?.toString()}`
     );
     if (!r) return undefined;
-    return r as TagWithPagination;
+    return Paginator.wrap(this.api, r, "tags");
   }
 
   /**
@@ -521,7 +526,7 @@ class Contact {
     email?: string;
     limit?: number;
     offset?: number;
-  }): Promise<EmailsWithPagination | undefined> {
+  }): Promise<Paginator<EmailRecord> | undefined> {
     return this.contacts.listEmails(this.id, options);
   }
 
@@ -542,7 +547,7 @@ class Contact {
   getAppliedTags(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<TagWithPagination | undefined> {
+  }): Promise<Paginator<Tag> | undefined> {
     return this.contacts.listAppliedTags(this.id, options);
   }
 

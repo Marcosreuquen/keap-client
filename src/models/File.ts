@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Files {
@@ -25,7 +26,7 @@ export class Files {
     viewable?: "PUBLIC" | "PRIVATE" | "BOTH";
     limit?: number;
     offset?: number;
-  }): Promise<FilesWithPagination | undefined> {
+  }): Promise<Paginator<File> | undefined> {
     const params = options
       ? createParams(options, [
           "contact_id",
@@ -39,7 +40,7 @@ export class Files {
       : undefined;
     const r = await this.api.get(`v1/files?${params?.toString()}`);
     if (!r) return undefined;
-    return r as FilesWithPagination;
+    return Paginator.wrap(this.api, r, "files");
   }
 
   /**

@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Emails {
@@ -25,7 +26,7 @@ export class Emails {
     until_sent_date?: string;
     limit?: number;
     offset?: number;
-  }): Promise<EmailsWithPagination | undefined> {
+  }): Promise<Paginator<EmailRecord> | undefined> {
     const params = options
       ? createParams(options, [
           "email",
@@ -39,7 +40,7 @@ export class Emails {
       : undefined;
     const r = await this.api.get(`v1/emails?${params?.toString()}`);
     if (!r) return undefined;
-    return r as EmailsWithPagination;
+    return Paginator.wrap(this.api, r, "emails");
   }
 
   /**

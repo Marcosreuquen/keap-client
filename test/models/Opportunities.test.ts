@@ -41,14 +41,8 @@ describe("Opportunities", () => {
       const result = await opportunities.getOpportunities();
       expect(result).toBeInstanceOf(Object);
       expect(result).toBeDefined();
-      expect(result).toHaveProperty("opportunities");
-      expect(result).toHaveProperty("count");
-      expect(result).toHaveProperty("next");
-      expect(result).toHaveProperty("previous");
-      expect(result?.count).toBe(opportunitiesData.length);
-      expect(result?.opportunities?.[0].opportunity_title).toBe(
-        "Opportunity 1"
-      );
+      expect(result?.getCount()).toBe(opportunitiesData.length);
+      expect(result?.getItems()?.[0]?.opportunity_title).toBe("Opportunity 1");
     });
 
     it("should throw an error if the API call fails", async () => {

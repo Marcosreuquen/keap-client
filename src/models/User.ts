@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Users {
@@ -17,7 +18,7 @@ export class Users {
     include_partners?: boolean;
     limit?: number;
     offset?: number;
-  }): Promise<UsersWithPagination | undefined> {
+  }): Promise<Paginator<IUser> | undefined> {
     const params = options
       ? createParams(options, [
           "limit",
@@ -28,7 +29,7 @@ export class Users {
       : undefined;
     const r = await this.api.get("v1/users?" + params?.toString());
     if (!r) return undefined;
-    return r as UsersWithPagination;
+    return Paginator.wrap(this.api, r, "users");
   }
 
   async createUser(data: UserCreateRequest): Promise<IUser | undefined> {

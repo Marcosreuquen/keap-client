@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Products {
@@ -22,7 +23,7 @@ export class Products {
     active?: boolean;
     limit?: number;
     offset?: number;
-  }): Promise<ProductsWithPagination | undefined> {
+  }): Promise<Paginator<Products> | undefined> {
     let queryParams;
     if (options) {
       queryParams = createParams(options, ["active", "limit", "offset"]);
@@ -45,10 +46,14 @@ export class Products {
       return new Product(this, product);
     });
 
-    return {
-      ...r,
-      products,
-    } as ProductsWithPagination;
+    return Paginator.wrap<Products>(
+      this.api,
+      {
+        ...r,
+        products,
+      },
+      "products"
+    );
   }
 
   /**

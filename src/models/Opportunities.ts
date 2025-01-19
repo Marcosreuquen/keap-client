@@ -1,4 +1,5 @@
 import { Api } from "../utils/api";
+import { Paginator } from "../utils/paginator";
 import { createParams } from "../utils/queryParams";
 
 export class Opportunities {
@@ -35,7 +36,7 @@ export class Opportunities {
     search_term: string;
     stage_id: number;
     user_id: number;
-  }): Promise<OpportunitiesWithPagination | undefined> {
+  }): Promise<Paginator<IOpportunity> | undefined> {
     let queryParams;
     if (parameters) {
       queryParams = createParams(parameters, [
@@ -67,10 +68,14 @@ export class Opportunities {
       return new Opportunity(this, opp);
     });
 
-    return {
-      ...r,
-      opportunities,
-    };
+    return Paginator.wrap(
+      this.api,
+      {
+        ...r,
+        opportunities,
+      },
+      "opportunities"
+    );
   }
 
   /**
