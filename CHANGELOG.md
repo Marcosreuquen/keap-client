@@ -36,3 +36,8 @@ Fix contact model issues, add some validations; Enhance Error logging
 ## 0.0.8
 
 Add Email, User and Files models
+
+
+## 0.1.0
+
+Refactor API module to use shorthand methods and native strategies; create a pagination wrapper for easier use; refactor models accordingly
