@@ -2,7 +2,7 @@ class Api {
   private apiKey: string | null = null;
   private timeout: number | null = null;
   private retries: number | null = null;
-  public baseUrl: string = "https://api.infusionsoft.com/crm/rest/v1/";
+  public baseUrl = "https://api.infusionsoft.com/crm/rest/";
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
@@ -47,8 +47,11 @@ class Api {
         "X-Keap-API-Key": this.apiKey,
         "Content-Type": "application/json",
       },
-      body: data ? JSON.stringify(data) : undefined,
     };
+
+    if (method !== "GET" && data) {
+      fetchOptions.body = JSON.stringify(data);
+    }
 
     const fetchWithRetry = async (
       url: string,
@@ -66,9 +69,8 @@ class Api {
           signal: controller.signal,
         });
         clearTimeout(timeoutId);
-
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response?.status}`);
         }
 
         return response;

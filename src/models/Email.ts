@@ -37,7 +37,7 @@ export class Emails {
           "limit",
           "offset",
         ])
-      : undefined;
+      : "";
     const r = await this.api.get(`v1/emails?${params?.toString()}`);
     if (!r) return undefined;
     return Paginator.wrap(this.api, r, "emails");

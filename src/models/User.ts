@@ -26,7 +26,7 @@ export class Users {
           "include_inactive",
           "include_partners",
         ])
-      : undefined;
+      : "";
     const r = await this.api.get("v1/users?" + params?.toString());
     if (!r) return undefined;
     return Paginator.wrap(this.api, r, "users");

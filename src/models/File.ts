@@ -37,7 +37,7 @@ export class Files {
           "limit",
           "offset",
         ])
-      : undefined;
+      : "";
     const r = await this.api.get(`v1/files?${params?.toString()}`);
     if (!r) return undefined;
     return Paginator.wrap(this.api, r, "files");

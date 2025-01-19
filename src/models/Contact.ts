@@ -64,7 +64,7 @@ export class Contacts {
           "since",
           "until",
         ])
-      : undefined;
+      : "";
 
     const r = await this.api.get(`v1/contacts?${params}`);
 
@@ -284,7 +284,7 @@ export class Contacts {
   ): Promise<Paginator<EmailRecord> | undefined> {
     const params = options
       ? createParams(options, ["email", "limit", "offset"])
-      : undefined;
+      : "";
     const r = await this.api.get(
       `v1/contacts/${contactId}/emails?${params?.toString()}`
     );
@@ -318,9 +318,7 @@ export class Contacts {
     contactId: number,
     options?: { limit?: number; offset?: number }
   ): Promise<Paginator<Tag> | undefined> {
-    const params = options
-      ? createParams(options, ["limit", "offset"])
-      : undefined;
+    const params = options ? createParams(options, ["limit", "offset"]) : "";
     const r = await this.api.get(
       `v1/contacts/${contactId}/tags?${params?.toString()}`
     );
