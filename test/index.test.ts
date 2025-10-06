@@ -1,8 +1,12 @@
 import { KeapClient } from "../src/index";
 import { AccountInfo } from "../src/models/AccountInfo";
 import { Contacts } from "../src/models/Contact";
+import { Ecommerce } from "../src/models/Ecommerce";
+import { Emails } from "../src/models/Email";
+import { Files } from "../src/models/File";
 import { Opportunities } from "../src/models/Opportunities";
 import { Products } from "../src/models/Products";
+import { Tags } from "../src/models/Tags";
 
 describe("KeapClient", () => {
   let keapClient: KeapClient;
@@ -37,7 +41,7 @@ describe("KeapClient", () => {
 
   it("should create a new Ecommerce instance", () => {
     const ecommerce = keapClient.Ecommerce;
-    expect(ecommerce).toBeInstanceOf(Object);
+    expect(ecommerce).toBeInstanceOf(Ecommerce);
   });
 
   it("should create a new Ecommerce.Orders instance", () => {
@@ -57,20 +61,25 @@ describe("KeapClient", () => {
 
   it("should create a new Files instance", () => {
     const files = keapClient.Files;
-    expect(files).toBeInstanceOf(Object);
+    expect(files).toBeInstanceOf(Files);
   });
 
   it("should create a new Emails instance", () => {
     const emails = keapClient.Emails;
-    expect(emails).toBeInstanceOf(Object);
+    expect(emails).toBeInstanceOf(Emails);
   });
 
   it("should create a single Emails instance", () => {
     const emails = keapClient.Emails;
     const emails2 = keapClient.Emails;
 
-    expect(emails).toBeInstanceOf(Object);
-    expect(emails2).toBeInstanceOf(Object);
+    expect(emails).toBeInstanceOf(Emails);
+    expect(emails2).toBeInstanceOf(Emails);
     expect(emails).toBe(emails2);
+  });
+
+  it("should create a new Tags instance", () => {
+    const tags = keapClient.Tags;
+    expect(tags).toBeInstanceOf(Tags);
   });
 });

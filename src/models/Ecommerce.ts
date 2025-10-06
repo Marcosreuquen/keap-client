@@ -165,10 +165,9 @@ class Subscription {
     this.api = api;
   }
 
-  async getSubscriptions(): Promise<SubscriptionWithPagination | undefined> {
+  async getSubscriptions(): Promise<Paginator<ISubscription>> {
     const r = await this.api.get("v1/subscriptions");
-    if (!r) return undefined;
-    return r as SubscriptionWithPagination;
+    return Paginator.wrap(this.api, r, "subscriptions");
   }
 
   async createSubscription(

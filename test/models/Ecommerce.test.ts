@@ -1,6 +1,8 @@
 import { Ecommerce } from "../../src/models/Ecommerce";
 import { Api } from "../../src/utils/api";
 
+jest.mock("../../src/utils/api");
+
 describe("Ecommerce", () => {
   let api: Api;
   let ecommerce: Ecommerce;
@@ -62,14 +64,13 @@ describe("Order", () => {
           title: "test",
         },
       ];
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce({
+      jest.spyOn(api, "get").mockResolvedValueOnce({
         orders: ordersData,
         count: ordersData.length,
         next: "https://example.com",
         previous: "https://example.com",
       });
       const result = await order.getOrders();
-      expect(result).toBeInstanceOf(Object);
       expect(result).toBeDefined();
       expect(result?.getCount()).toBe(ordersData.length);
       expect(result?.getItems()).toHaveLength(ordersData.length);
@@ -159,7 +160,7 @@ describe("Order", () => {
           zip_four: "string",
         },
       };
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(response);
+      jest.spyOn(api, "post").mockResolvedValueOnce(response);
       const result = await order.createOrder(options, orderData);
       expect(result).toBeTruthy();
     });
@@ -261,7 +262,7 @@ describe("Order", () => {
         total_due: 0,
         total_paid: 0,
       };
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(response);
+      jest.spyOn(api, "get").mockResolvedValueOnce(response);
       const result = await order.getOrder(orderId);
       expect(result).toEqual(response);
     });
@@ -306,9 +307,7 @@ describe("Subscription", () => {
         cycle_type: "MONTH",
         plan_price: 10.99,
       };
-      jest
-        .spyOn(api, "makeApiCall")
-        .mockResolvedValueOnce(subscriptionPlanData);
+      jest.spyOn(api, "post").mockResolvedValueOnce(subscriptionPlanData);
       const result = await subscription.createSubscription(data);
       expect(result).toEqual(subscriptionPlanData);
     });
@@ -328,7 +327,7 @@ describe("Subscription", () => {
         subscription_plan_id: 1,
       };
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "post")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(subscription.createSubscription(data)).rejects.toThrowError(
         "API call failed"
@@ -350,14 +349,22 @@ describe("Subscription", () => {
           plan_price: 99.99,
         },
       ];
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(subscriptionsData);
+      jest.spyOn(api, "get").mockResolvedValueOnce({
+        count: subscriptionsData.length,
+        next: "https://example.com",
+        previous: "https://example.com",
+        subscriptions: subscriptionsData,
+      });
       const result = await subscription.getSubscriptions();
-      expect(result).toEqual(subscriptionsData);
+      expect(result.getCount()).toBe(2);
+      expect(result.getItems()).toEqual(subscriptionsData);
+      expect(typeof result.next).toBe("function");
+      expect(typeof result.previous).toBe("function");
     });
 
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "get")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(subscription.getSubscriptions()).rejects.toThrowError(
         "API call failed"
@@ -409,14 +416,14 @@ describe("Transaction", () => {
           type: "REFUND",
         },
       ];
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce({
+      jest.spyOn(api, "get").mockResolvedValueOnce({
         transactions: transactionsData,
         count: transactionsData.length,
         next: "https://example.com",
         previous: "https://example.com",
       });
       const result = await transaction.getTransactions();
-      expect(result?.getCount()).toBe(transactionsData.length);
+      expect(result?.getCount()).toBe(2);
       expect(result?.getItems()).toEqual(transactionsData);
       expect(typeof result?.next).toBe("function");
       expect(typeof result?.previous).toBe("function");
@@ -424,7 +431,7 @@ describe("Transaction", () => {
 
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "get")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(transaction.getTransactions()).rejects.toThrowError(
         "API call failed"
@@ -449,14 +456,14 @@ describe("Transaction", () => {
         transaction_date: "2022-01-01",
         type: "SALE",
       };
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(transactionData);
+      jest.spyOn(api, "get").mockResolvedValueOnce(transactionData);
       const result = await transaction.getTransaction(1);
       expect(result).toEqual(transactionData);
     });
 
     it("should throw an error if the API call fails", async () => {
       jest
-        .spyOn(api, "makeApiCall")
+        .spyOn(api, "get")
         .mockRejectedValueOnce(new Error("API call failed"));
       await expect(transaction.getTransaction(1)).rejects.toThrowError(
         "API call failed"
@@ -464,7 +471,7 @@ describe("Transaction", () => {
     });
 
     it("should return undefined if the transaction is not found", async () => {
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(undefined);
+      jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
       const result = await transaction.getTransaction(1);
       expect(result).toBeUndefined();
     });

@@ -78,7 +78,7 @@ class Api {
         if (retries > 0) {
           return fetchWithRetry(url, options, retries - 1);
         } else {
-          throw error;
+          return Promise.reject(error);
         }
       }
     };

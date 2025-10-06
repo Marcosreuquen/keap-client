@@ -51,13 +51,12 @@ contact.applyTags(['tag1', 'tag2']);
 - ✅ Product
 - ⬜️ REST Hooks
 - ⬜️ Setting
-- ⬜️ Tags
+- ✅ Tags
 - ⬜️ Task
 - ⬜️ User Info
 - ✅ Users 
 
 ## Next Steps
 
-- FEATURE Implement Tags Model.
 - FEATURE Implement Task Model
 - REFACTOR Add support for throwables and error handling.

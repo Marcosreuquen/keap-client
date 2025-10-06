@@ -170,16 +170,23 @@ type EmailRecord = {
   subject?: string;
 };
 
-type Pagination = {
-  count?: number;
-  next?: string;
-  previous?: string;
-};
-
 type Tag = {
   category: string;
   id: number;
   name: string;
+};
+
+interface ITag {
+  category?: TagCategory;
+  id?: number;
+  name: string;
+  description?: string;
+}
+
+type TagCategory = {
+  id?: number;
+  name?: string;
+  description?: string;
 };
 
 type UTM = {
@@ -301,27 +308,6 @@ interface IProductSubscription {
   url?: string;
 }
 
-type ProductsWithPagination = Pagination & {
-  products: Product[];
-  sync_token?: string;
-};
-
-type ContactsWithPagination = Pagination & {
-  contacts: Contact[];
-};
-
-type EmailsWithPagination = Pagination & {
-  emails: EmailRecord[];
-};
-
-type TagWithPagination = Pagination & {
-  tags: Tag[];
-};
-
-type OpportunitiesWithPagination = Pagination & {
-  opportunities: Opportunity[];
-};
-
 type Base64Image = `data:image/${
   | "png"
   | "gif"
@@ -426,10 +412,6 @@ type PaymentPlan = {
   plan_start_date?: string;
 };
 
-type OrdersWithPagination = Pagination & {
-  orders: IOrder[];
-};
-
 type createOrderPayment = {
   apply_to_commissions?: boolean;
   charge_now?: boolean;
@@ -461,11 +443,6 @@ interface ISubscription {
   subscription_plan_id?: number;
   use_default_payment_gateway?: boolean;
 }
-
-type SubscriptionWithPagination = Pagination & {
-  subscriptions: ISubscription[];
-};
-
 type createSubscription = {
   allow_duplicate?: boolean;
   allow_tax?: boolean;
@@ -497,11 +474,6 @@ interface ITransaction {
   transaction_date?: string;
   type?: string;
 }
-
-type TransactionsWithPagination = Pagination & {
-  transactions: ITransaction[];
-};
-
 
 type SendEmailRequest = {
   address_filed?: string;
@@ -548,10 +520,6 @@ interface IFile {
   public: boolean;
   remote_file_key?: string;
 }
-
-type FilesWithPagination = Pagination & {
-  files: IFile[];
-};
 
 type FileUploadRequest = {
   file_name: string;
@@ -602,10 +570,6 @@ interface IUser {
   website?: string;
 }
 
-type UsersWithPagination = Pagination & {
-  users: IUser[];
-};
-
 type UserCreateRequest = {
   admin?: boolean;
   email: string;
@@ -616,7 +580,7 @@ type UserCreateRequest = {
 interface ApiErrorResponse {
   statusCode: number;
   message: string;
-  error?: Throwable; // Adjuntar el objeto Throwable si es necesario
+  error?: Throwable;
 }
 
 interface Throwable {
@@ -637,3 +601,34 @@ interface StackTraceElement {
   moduleVersion?: string;
   nativeMethod?: boolean;
 }
+
+interface ICompany {
+  id?: number;
+  company_name?: string;
+  email?: string;
+}
+
+type TaggedCompany = {
+  company: ICompany;
+  date_applied: string;
+};
+
+type TaggedContact = {
+  contact: {
+    id?: number;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+  };
+  date_applied: string;
+};
+
+type ApplyTagResponse = {
+  key:
+    | "SUCCESS"
+    | "DUPLICATE"
+    | "CONTACT_NOT_FOUND"
+    | "TAG_ID_NOT_FOUND"
+    | "FAILURE"
+    | "NO_PERMISSION";
+}[];

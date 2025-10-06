@@ -16,18 +16,6 @@ describe("Contacts", () => {
   });
 
   describe("getContacts", () => {
-    it("should return undefined if no contacts are found", async () => {
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(undefined);
-      const result = await contacts.getContacts();
-      expect(result).toBeUndefined();
-    });
-
-    it("should return an error if no contacts are found and throw is true", async () => {
-      jest.spyOn(api, "makeApiCall").mockResolvedValueOnce(undefined);
-      const result = await contacts.getContacts();
-      expect(result).toBeUndefined();
-    });
-
     it("should return contacts with pagination if found", async () => {
       const contactsData = [
         { id: 1, name: "John Doe" },

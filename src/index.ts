@@ -7,6 +7,7 @@ import { Ecommerce } from "./models/Ecommerce";
 import { Files } from "./models/File";
 import { Emails } from "./models/Email";
 import { Users } from "./models/User";
+import { Tags } from "./models/Tags";
 
 class KeapClient {
   private api: Api;
@@ -18,6 +19,7 @@ class KeapClient {
   private _files?: Files;
   private _emails?: Emails;
   private _users?: Users;
+  private _tags?: Tags;
 
   /**
    * Creates a new instance of KeapClient.
@@ -103,6 +105,13 @@ class KeapClient {
       this._users = new Users(this.api);
     }
     return this._users;
+  }
+
+  get Tags() {
+    if (!this._tags) {
+      this._tags = new Tags(this.api);
+    }
+    return this._tags;
   }
 }
 
