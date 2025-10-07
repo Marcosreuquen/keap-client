@@ -1,6 +1,6 @@
 {
   "name": "keap-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "description": "A client to work with Infusionsoft/Keap API.",
   "main": "dist/index.js",
@@ -15,7 +15,8 @@
     "release": "npm run lint && npm run build && npm publish",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "prepare": "npm run build"
   },
   "keywords": [
     "infusionsoft",

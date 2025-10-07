@@ -46,3 +46,8 @@ Refactor API module to use shorthand methods and native strategies; create a pag
 ## 0.2.0
 
 add tags model, improve error handling and throwing, improve testing accordingly
+
+
+## 0.2.1
+
+update readme
