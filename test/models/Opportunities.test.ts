@@ -15,17 +15,19 @@ describe("Opportunities", () => {
   });
 
   describe("getOpportunities", () => {
-    it("should return undefined if no opportunities are found", async () => {
-      jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
-      const result = await opportunities.getOpportunities();
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if no opportunities are found", async () => {
+			jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
+			await expect(opportunities.getOpportunities()).rejects.toThrowError(
+				"Invalid response format: missing opportunities property"
+			);
+		});
 
-    it("should return an error if no opportunities are found and throw is true", async () => {
-      jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
-      const result = await opportunities.getOpportunities();
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if no opportunities are found and throw is true", async () => {
+			jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
+			await expect(opportunities.getOpportunities()).rejects.toThrowError(
+				"Invalid response format: missing opportunities property"
+			);
+		});
 
     it("should return opportunities with pagination if found", async () => {
       const opportunitiesData = [
@@ -54,12 +56,13 @@ describe("Opportunities", () => {
       );
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "get").mockResolvedValueOnce(null);
-      const result = await opportunities.getOpportunities();
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "get").mockResolvedValueOnce(null);
+			await expect(opportunities.getOpportunities()).rejects.toThrowError(
+				"Invalid response format: missing opportunities property"
+			);
+		});
   });
 
   describe("createOpportunity", () => {
@@ -67,19 +70,28 @@ describe("Opportunities", () => {
       jest
         .spyOn(api, "post")
         .mockRejectedValueOnce(new Error("API call failed"));
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      await expect(opportunities.createOpportunity({})).rejects.toThrowError(
-        "API call failed"
-      );
+      const validOpportunity = {
+				contact: { id: 1 },
+				stage: { id: 1 },
+				opportunity_title: "Test",
+			} as IOpportunity;
+			await expect(
+				opportunities.createOpportunity(validOpportunity)
+			).rejects.toThrowError("API call failed");
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "post").mockResolvedValueOnce(null);
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      const result = await opportunities.createOpportunity({});
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "post").mockResolvedValueOnce(null);
+			const validOpportunity = {
+				contact: { id: 1 },
+				stage: { id: 1 },
+				opportunity_title: "Test",
+			} as IOpportunity;
+			await expect(
+				opportunities.createOpportunity(validOpportunity)
+			).rejects.toThrowError("Cannot read properties of null");
+		});
   });
 
   describe("replaceOpportunity", () => {
@@ -87,19 +99,30 @@ describe("Opportunities", () => {
       jest
         .spyOn(api, "put")
         .mockRejectedValueOnce(new Error("API call failed"));
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      await expect(opportunities.replaceOpportunity({})).rejects.toThrowError(
-        "API call failed"
-      );
+      const validOpportunity = {
+				id: 1,
+				contact: { id: 1 },
+				stage: { id: 1 },
+				opportunity_title: "Test",
+			} as IOpportunity;
+			await expect(
+				opportunities.replaceOpportunity(validOpportunity)
+			).rejects.toThrowError("API call failed");
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "put").mockResolvedValueOnce(null);
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      const result = await opportunities.replaceOpportunity({});
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "put").mockResolvedValueOnce(null);
+			const validOpportunity = {
+				id: 1,
+				contact: { id: 1 },
+				stage: { id: 1 },
+				opportunity_title: "Test",
+			} as IOpportunity;
+			await expect(
+				opportunities.replaceOpportunity(validOpportunity)
+			).rejects.toThrowError("Cannot read properties of null");
+		});
   });
 
   describe("getOpportunity", () => {
@@ -112,12 +135,13 @@ describe("Opportunities", () => {
       );
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "get").mockResolvedValueOnce(null);
-      const result = await opportunities.getOpportunity(1);
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "get").mockResolvedValueOnce(null);
+			await expect(opportunities.getOpportunity(1)).rejects.toThrowError(
+				"Cannot read properties of null"
+			);
+		});
   });
 
   describe("deleteOpportunity", () => {
@@ -130,12 +154,12 @@ describe("Opportunities", () => {
       );
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "delete").mockResolvedValueOnce(null);
-      const result = await opportunities.deleteOpportunity(1);
-      expect(result).toBeUndefined();
-    });
+    it("should return true if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "delete").mockResolvedValueOnce(null);
+			const result = await opportunities.deleteOpportunity(1);
+			expect(result).toBe(true);
+		});
   });
 
   describe("updateOpportunity", () => {
@@ -143,18 +167,25 @@ describe("Opportunities", () => {
       jest
         .spyOn(api, "patch")
         .mockRejectedValueOnce(new Error("API call failed"));
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      await expect(opportunities.updateOpportunity({})).rejects.toThrowError(
-        "API call failed"
-      );
+      const validOpportunity = {
+				id: 1,
+				opportunity_title: "Test",
+			} as IOpportunity;
+			await expect(
+				opportunities.updateOpportunity(validOpportunity)
+			).rejects.toThrowError("API call failed");
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "patch").mockResolvedValueOnce(null);
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      const result = await opportunities.updateOpportunity({});
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "patch").mockResolvedValueOnce(null);
+			const validOpportunity = {
+				id: 1,
+				opportunity_title: "Test",
+			} as IOpportunity;
+			await expect(
+				opportunities.updateOpportunity(validOpportunity)
+			).rejects.toThrowError("Cannot read properties of null");
+		});
   });
 });

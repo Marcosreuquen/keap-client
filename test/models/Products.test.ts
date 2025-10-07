@@ -15,11 +15,12 @@ describe("Products", () => {
   });
 
   describe("getProducts", () => {
-    it("should return undefined if no products are found", async () => {
-      jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
-      const result = await products.getProducts();
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if no products are found", async () => {
+			jest.spyOn(api, "get").mockResolvedValueOnce(undefined);
+			await expect(products.getProducts()).rejects.toThrowError(
+				"Invalid response format: missing products property"
+			);
+		});
 
     it("should return a PaginationWrapper with products if found", async () => {
       const productsData = [
@@ -48,12 +49,13 @@ describe("Products", () => {
       );
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "get").mockResolvedValueOnce(null);
-      const result = await products.getProducts();
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "get").mockResolvedValueOnce(null);
+			await expect(products.getProducts()).rejects.toThrowError(
+				"Invalid response format: missing products property"
+			);
+		});
   });
 
   describe("createASubscriptionPlan", () => {
@@ -99,13 +101,14 @@ describe("Products", () => {
       );
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "post").mockResolvedValueOnce(null);
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      const result = await products.createProduct({});
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "post").mockResolvedValueOnce(null);
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			await expect(products.createProduct({})).rejects.toThrowError(
+				"Invalid product data"
+			);
+		});
   });
 
   describe("getProduct", () => {
@@ -118,12 +121,13 @@ describe("Products", () => {
       );
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "get").mockResolvedValueOnce(null);
-      const result = await products.getProduct(1);
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "get").mockResolvedValueOnce(null);
+			await expect(products.getProduct(1)).rejects.toThrowError(
+				"Invalid product data"
+			);
+		});
   });
 
   describe("deleteProduct", () => {
@@ -145,23 +149,29 @@ describe("Products", () => {
   });
 
   describe("updateProduct", () => {
+    it("should throw an error if product ID is missing", async () => {
+			// @ts-expect-error - Testing with invalid data
+			await expect(products.updateProduct({})).rejects.toThrowError(
+				"Product ID is required for update"
+			);
+		});
+
     it("should throw an error if the API call fails", async () => {
       jest
         .spyOn(api, "patch")
         .mockRejectedValueOnce(new Error("API call failed"));
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      await expect(products.updateProduct({})).rejects.toThrowError(
-        "API call failed"
-      );
+      await expect(
+				products.updateProduct({ id: 1, product_name: "Test" })
+			).rejects.toThrowError("API call failed");
     });
 
-    it("should return undefined if the API call returns null", async () => {
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      jest.spyOn(api, "patch").mockResolvedValueOnce(null);
-      // @ts-expect-error - mockResolvedValue can only be called with non-nullable values
-      const result = await products.updateProduct({});
-      expect(result).toBeUndefined();
-    });
+    it("should throw an error if the API call returns null", async () => {
+			// @ts-expect-error - mockResolvedValue can only be called with non-nullable values
+			jest.spyOn(api, "patch").mockResolvedValueOnce(null);
+			await expect(
+				products.updateProduct({ id: 1, product_name: "Test" })
+			).rejects.toThrowError("Invalid product data");
+		});
   });
 
   describe("createASubscriptionPlan", () => {

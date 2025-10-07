@@ -51,13 +51,11 @@ describe("Users", () => {
       expect(result?.getCount()).toBe(mockResponse.count);
     });
 
-    it("should return undefined if api.get returns undefined", async () => {
-      (api.get as jest.Mock).mockResolvedValue(undefined);
+    it("should throw an error if api.get fails", async () => {
+			(api.get as jest.Mock).mockRejectedValue(new Error("API Error"));
 
-      const result = await users.listUsers();
-
-      expect(result).toBeUndefined();
-    });
+			await expect(users.listUsers()).rejects.toThrow("API Error");
+		});
   });
 
   describe("createUser", () => {
@@ -69,12 +67,12 @@ describe("Users", () => {
       expect(result).toBe(mockUser);
     });
 
-    it("should return undefined if api.post returns undefined", async () => {
-      (api.post as jest.Mock).mockResolvedValue(undefined);
+    it("should throw an error if api.post fails", async () => {
+			(api.post as jest.Mock).mockRejectedValue(new Error("API Error"));
 
-      const result = await users.createUser(mockUserCreateRequest);
-
-      expect(result).toBeUndefined();
-    });
+			await expect(users.createUser(mockUserCreateRequest)).rejects.toThrow(
+				"API Error"
+			);
+		});
   });
 });

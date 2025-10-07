@@ -38,13 +38,13 @@ describe("Email", () => {
       expect(result?.getCount()).toEqual(1);
     });
 
-    it("should return undefined if API call fails", async () => {
-      (api.get as jest.Mock).mockResolvedValue(undefined);
+    it("should throw an error if API call fails", async () => {
+			(api.get as jest.Mock).mockRejectedValue(new Error("API Error"));
 
-      const result = await emails.listEmails({ contact_id: 1 });
-
-      expect(result).toBeUndefined();
-    });
+			await expect(emails.listEmails({ contact_id: 1 })).rejects.toThrow(
+				"API Error"
+			);
+		});
   });
 
   describe("createEmail", () => {
@@ -86,6 +86,12 @@ describe("Email", () => {
       expect(result?.emails[1]).toEqual({ ...emailMock, contact_id: 2 });
       expect(result?.emails[0]?.contact_id).toEqual(1);
     });
+
+    it("should throw an error if emails array is empty", async () => {
+			await expect(emails.createASet([])).rejects.toThrow(
+				"Emails array cannot be empty"
+			);
+		});
   });
 
   describe("get", () => {
@@ -110,12 +116,10 @@ describe("Email", () => {
       expect(result).toBe(true);
     });
 
-    it("should return undefined if API call fails", async () => {
-      (api.delete as jest.Mock).mockResolvedValue(undefined);
+    it("should throw an error if API call fails", async () => {
+			(api.delete as jest.Mock).mockRejectedValue(new Error("API Error"));
 
-      const result = await emails.delete(1);
-
-      expect(result).toBeUndefined();
-    });
+			await expect(emails.delete(1)).rejects.toThrow("API Error");
+		});
   });
 });

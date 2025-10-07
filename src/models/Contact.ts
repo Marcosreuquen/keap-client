@@ -13,44 +13,45 @@ export class Contacts {
 	}
 
 	/**
-	 * Fetches a list of contacts.
-	 * @param parameters - Options for fetching contacts, like page size and page number.
-	 * email:string //Optional email address to query on
-	 * family_name:string //Optional last name or surname to query on
-	 * given_name:string //Optional first name or forename to query on
-	 * limit:number //Sets a total of items to return
-	 * offset:number //Sets a beginning range of items to return
-	 * optional_properties:string[] //Comma-delimited list of Contact properties to include in the response. (Some fields such as lead_source_id, custom_fields, and job_title aren't included, by default.)
-	 * order:string //Enum: "id" "date_created" "last_updated" "name" "firstName" "email" //Attribute to order items by
-	 * order_direction:string //Enum: "ASCENDING" "DESCENDING" //How to order the data i.e. ascending (A-Z) or descending (Z-A)
-	 * since:string //Date to start searching from on LastUpdated ex. 2017-01-01T22:17:59.039Z
-	 * until:string //Date to search to on LastUpdated ex. 2017-01-01T22:17:59.039Z
+	 * Fetches a list of contacts with optional filtering.
+	 * @param parameters - Options for fetching contacts.
+	 * @param parameters.email - Optional email address to query on.
+	 * @param parameters.family_name - Optional last name or surname to query on.
+	 * @param parameters.given_name - Optional first name or forename to query on.
+	 * @param parameters.limit - Sets a total of items to return.
+	 * @param parameters.offset - Sets a beginning range of items to return.
+	 * @param parameters.optional_properties - List of Contact properties to include in the response.
+	 * @param parameters.order - Attribute to order items by.
+	 * @param parameters.order_direction - How to order the data (ascending or descending).
+	 * @param parameters.since - Date to start searching from on LastUpdated (ex. 2017-01-01T22:17:59.039Z).
+	 * @param parameters.until - Date to search to on LastUpdated (ex. 2017-01-01T22:17:59.039Z).
 	 * @example
-	 * const contacts = await contacts.getContacts({ limit: 5, offset: 10 });
-	 * console.log(contacts);
-	 * @returns The list of contacts if the API call was successful.
-	 * @throws Will throw an error if the API call fails.
+	 * const contacts = await contactsInstance.getContacts({
+	 *   limit: 5,
+	 *   offset: 10,
+	 *   order: "date_created",
+	 *   order_direction: "DESCENDING"
+	 * });
+	 * @returns A paginator containing the list of contacts.
 	 */
 	async getContacts(parameters?: {
-		email: string;
-		family_name: string;
-		given_name: string;
-		limit: number;
-		offset: number;
-		optional_properties: string[];
-		order:
+		email?: string;
+		family_name?: string;
+		given_name?: string;
+		limit?: number;
+		offset?: number;
+		optional_properties?: string[];
+		order?:
 			| "id"
 			| "date_created"
 			| "last_updated"
 			| "name"
 			| "firstName"
 			| "email";
-		order_direction: "ASCENDING" | "DESCENDING";
-		since: string;
-		until: string;
+		order_direction?: "ASCENDING" | "DESCENDING";
+		since?: string;
+		until?: string;
 	}): Promise<Paginator<IContact>> {
-		//! // IMPORTANT use this case as an example of how the paginator works and how the caller method should look
-
 		const params = parameters
 			? createParams(parameters, [
 					"email",
@@ -63,57 +64,55 @@ export class Contacts {
 					"order_direction",
 					"since",
 					"until",
-			  ])
+			  ]).toString()
 			: "";
 
-		const r = await this.api.get(`v1/contacts?${params}`);
+		const response = await this.api.get(`v1/contacts?${params}`);
 
-		// Add this line to assert that r is an object with a 'contacts' property
-		const rObj = r as { contacts: IContact[] | null };
+		const responseObj = response as { contacts: IContact[] | null };
 
-		if (!rObj || !Object.prototype.hasOwnProperty.call(rObj, "contacts")) {
-			throw new Error("No contacts found");
+		if (
+			!responseObj ||
+			!Object.prototype.hasOwnProperty.call(responseObj, "contacts")
+		) {
+			throw new Error("Invalid response format: missing contacts property");
 		}
 
-		if (rObj.contacts === null) {
-			throw new Error("No contacts found");
+		if (responseObj.contacts === null) {
+			throw new Error("No contacts found in response");
 		}
 
-		const contacts = rObj.contacts.map((c: IContact) => {
-			if (c === null) {
-				throw new Error("Contact is null");
+		const contacts = responseObj.contacts.map((contact: IContact) => {
+			if (contact === null) {
+				throw new Error("Contact data is null");
 			}
-			return new Contact(this, c);
+			return new Contact(this, contact);
 		});
-		const paginator: Paginator<IContact> = Paginator.wrap(
-			this.api,
-			{ ...r, contacts },
-			"contacts"
-		);
 
-		return paginator;
+		return Paginator.wrap(this.api, { ...response, contacts }, "contacts");
 	}
-
 	/**
-	 * Creates a new contact in Keap. NB: Contact must contain at least one item in email_addresses or phone_numbers and country_code is required if region is specified on the adresses.
-	 * @param contactData {IContact} - The data to create a contact with ContactData.
-	 * @returns The newly created contact if the API call was successful.
+	 * Creates a new contact in Keap.
+	 * Note: Contact must contain at least one item in email_addresses or phone_numbers,
+	 * and country_code is required if region is specified on the addresses.
+	 * @param contactData - The data to create a contact with.
+	 * @returns The newly created contact.
 	 * @example
-	 * const contact = await contacts.createContact(given_name: 'John',
-	 *  family_name: 'Doe',
-	 * email_addresses: [
-	 * {
-	 *   email: "string@example.com",
-	 *   field: "EMAIL1"
-	 * }
-	 * ],);
-	 * console.log(contact);
-	 * @throws Will throw an error if the API call fails.
+	 * const contact = await contactsInstance.createContact({
+	 *   given_name: 'John',
+	 *   family_name: 'Doe',
+	 *   email_addresses: [
+	 *     {
+	 *       email: "john.doe@example.com",
+	 *       field: "EMAIL1"
+	 *     }
+	 *   ]
+	 * });
 	 */
 	async createContact(contactData: IContact): Promise<Contact> {
 		if (!contactData.email_addresses && !contactData.phone_numbers) {
 			throw new Error(
-				"Contact must contain at least one item in email_addresses or phone_numbers."
+				"Contact must contain at least one item in email_addresses or phone_numbers"
 			);
 		}
 		const addressesWithRegionAndNoCountryCode = contactData.addresses?.filter(
@@ -125,13 +124,12 @@ export class Contacts {
 			addressesWithRegionAndNoCountryCode.length > 0
 		) {
 			throw new Error(
-				"Contact must contain a country code if a region is provided."
+				"Contact must contain a country code if a region is provided"
 			);
 		}
-		const r = await this.api.post("v1/contacts", contactData as IContact);
-		return new Contact(this, r as IContact);
+		const response = await this.api.post("v1/contacts", contactData);
+		return new Contact(this, response as IContact);
 	}
-
 	/**
 	 * Updates an existing contact.
 	 * @param contactId - The ID of the contact to update.
@@ -156,114 +154,101 @@ export class Contacts {
 	/**
 	 * Deletes a contact by ID.
 	 * @param contactId - The ID of the contact to delete.
-	 * @returns The result of the API call if it was successful.
-	 * @throws Will throw an error if the API call fails.
+	 * @returns True if the contact was successfully deleted.
 	 * @example
-	 * const result = await contacts.deleteContact(123);
-	 * console.log(result); // true
+	 * const result = await contactsInstance.deleteContact(123);
 	 * if (result) {
 	 *   console.log("Contact deleted successfully");
-	 * }else{
-	 *   console.log("Failed to delete contact");
 	 * }
 	 */
 	async deleteContact(contactId: number): Promise<boolean> {
-		const r = await this.api.delete(`v1/contacts/${contactId}`);
-		return r ? true : false;
+		await this.api.delete(`v1/contacts/${contactId}`);
+		return true;
 	}
-
 	/**
 	 * Fetches a single contact by ID.
 	 * @param contactId - The ID of the contact to fetch.
-	 * @returns The contact if the API call was successful.
-	 * @throws Will throw an error if the API call fails.
+	 * @returns The contact.
 	 * @example
-	 * const contact = await contacts.getContact(123);
+	 * const contact = await contactsInstance.getContact(123);
 	 * console.log(contact.given_name); // "Jane"
 	 * console.log(contact.family_name); // "Doe"
 	 */
 	async getContact(contactId: number): Promise<Contact> {
-		const r = await this.api.get(`v1/contacts/${contactId}`);
-		return new Contact(this, r as IContact);
+		const response = await this.api.get(`v1/contacts/${contactId}`);
+		return new Contact(this, response as IContact);
 	}
-
 	/**
-	 * Fetches the contact model.
-	 * @returns The contact model if the API call was successful.
-	 * @throws Will throw an error if the API call fails.
+	 * Fetches the contact model schema.
+	 * @returns The contact model.
 	 * @example
-	 * const contactModel = await contacts.getContactModel();
+	 * const contactModel = await contactsInstance.getContactModel();
 	 * console.log(contactModel);
 	 */
 	async getContactModel(): Promise<ContactModel> {
-		const r = await this.api.get("v1/contacts/model");
-		return r as Promise<ContactModel>;
+		const response = await this.api.get("v1/contacts/model");
+		return response as ContactModel;
 	}
 
 	/**
 	 * Creates a new custom contact field.
-	 * @param customFieldData{CustomField} - The data to create a custom field with.
-	 * @returns The newly created custom field if the API call was successful.
-	 * @throws Will throw an error if the API call fails.
+	 * @param customFieldData - The data to create a custom field with.
+	 * @returns The newly created custom field.
+	 * @example
+	 * const customField = await contactsInstance.createCustomField({
+	 *   field_type: "Text",
+	 *   label: "Custom Field Name"
+	 * });
 	 */
 	async createCustomField(customFieldData: CustomField): Promise<CustomField> {
-		const r = await this.api.post("v1/contacts/customFields", customFieldData);
-		return r as Promise<CustomField>;
+		const response = await this.api.post(
+			"v1/contacts/customFields",
+			customFieldData
+		);
+		return response as CustomField;
 	}
 
 	/**
 	 * Creates a new contact if the contact does not exist, or updates the contact if it does.
-	 * @param contactData {IContact} - The data to create or update a contact with.
-	 * @returns The newly created or updated contact if the API call was successful.
-	 * @throws Will throw an error if the API call fails.
+	 * @param contactData - The data to create or update a contact with.
+	 * @returns The newly created or updated contact.
 	 * @example
-	 * const contact = await contacts.createOrUpdate({
-	 *    given_name: "Jane",
-	 *    family_name: "Doe"
-	 * })
-	 *
+	 * const contact = await contactsInstance.createOrUpdate({
+	 *   given_name: "Jane",
+	 *   family_name: "Doe"
+	 * });
 	 * console.log(contact); // {given_name: "Jane", family_name: "Doe", id: 123}
-	 *
-	 *
-	 * const contact = await contacts.createOrUpdate({
-	 *    given_name: "John",
-	 *    family_name: "Doe"
-	 *    id: 123
-	 * })
-	 *
-	 * console.log(contact); // {given_name: "John", family_name: "Doe", id: 123}
 	 */
 	async createOrUpdate(contactData: IContact): Promise<Contact> {
-		const r = await this.api.put("v1/contacts", contactData);
-		return new Contact(this, r as IContact);
+		const response = await this.api.put("v1/contacts", contactData);
+		return new Contact(this, response as IContact);
 	}
 
 	/**
 	 * Fetches the credit cards associated with a contact.
 	 * @param contactId - The ID of the contact to fetch credit cards for.
 	 * @returns The credit cards associated with the contact if the API call was successful.
-	 * @throws Will throw an error if the API call fails.
 	 */
-	getCreditCards(contactId: number): Promise<object> {
-		return this.api.get(
-			`v1/contacts/${contactId}/creditCards`
-		) as Promise<object>; //?
+	async getCreditCards(contactId: number): Promise<object> {
+		const response = await this.api.get(`v1/contacts/${contactId}/creditCards`);
+		return response as object;
 	}
 
 	/**
 	 * Creates a new credit card for a contact.
 	 * @param contactId - The ID of the contact to add the credit card to.
 	 * @param creditCardData - The data to create the credit card with.
-	 * @returns {Promise<CreditCard>} - The newly created credit card if the API call was successful.
+	 * @returns The newly created credit card.
 	 */
-	createCreditCard(
+	async createCreditCard(
 		contactId: number,
 		creditCardData: object
 	): Promise<CreditCard> {
-		return this.api.post(
+		const response = await this.api.post(
 			`v1/contacts/${contactId}/creditCards`,
 			creditCardData
-		) as Promise<CreditCard>;
+		);
+		return response as CreditCard;
 	}
 
 	/**
