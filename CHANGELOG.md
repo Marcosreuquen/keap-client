@@ -41,3 +41,8 @@ Add Email, User and Files models
 ## 0.1.0
 
 Refactor API module to use shorthand methods and native strategies; create a pagination wrapper for easier use; refactor models accordingly
+
+
+## 0.2.0
+
+add tags model, improve error handling and throwing, improve testing accordingly
