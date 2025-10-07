@@ -1,0 +1,89 @@
+name: Publish npm package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm test
+
+  publish-npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Configure npm auth
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then echo "NPM_TOKEN secret is not set"; exit 1; fi
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Check npm published version
+        run: |
+          set -e
+          pkg_version=$(node -p "require('./package.json').version")
+          pkg_name=$(node -p "require('./package.json').name")
+          echo "Local package: $pkg_name@$pkg_version"
+
+          # Query npm registry for the latest published version (if any)
+          remote_version=$(npm view "$pkg_name" version --registry https://registry.npmjs.org/ 2>/dev/null || true)
+
+          if [ -z "$remote_version" ]; then
+            echo "No published version found on npm, continuing..."
+            exit 0
+          fi
+
+          echo "Published version on npm: $remote_version"
+
+          # Lightweight semver-like compare (compares numeric parts only)
+          node -e "function cmp(a,b){const pa=(a||'0').split(/[-+]/)[0].split('.').map(x=>parseInt(x,10)||0);const pb=(b||'0').split(/[-+]/)[0].split('.').map(x=>parseInt(x,10)||0);for(let i=0;i<Math.max(pa.length,pb.length);i++){const na=pa[i]||0;const nb=pb[i]||0;if(na>nb) return 1; if(na<nb) return -1;}return 0;} const local=process.argv[1], remote=process.argv[2]; if(cmp(local,remote) <= 0){ console.error('Local version ('+local+') is not greater than remote ('+remote+'). Aborting publish.'); process.exit(1); } else { console.log('Local version is greater than remote. Proceeding to publish.'); }" "$pkg_version" "$remote_version"
+
+
+      - name: Publish package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Ensure package is not private and version is set
+          node -e "const pkg=require('./package.json'); if(pkg.private) { console.error('package.json has private:true - aborting'); process.exit(1) }"
+          npm publish --access public
